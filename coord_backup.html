@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width">
+    <title>주소를 좌표로 변환</title>
+    <style>
+		header {padding: 10px; font-size: 20px; background: #F2F2F2;}
+		article {padding: 10px; font-size: 14px;}
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            padding: 3px;
+            border: 1px solid #dadada;
+        }
+        td {
+            padding: 3px;
+            border: 1px solid #dadada;
+        }
+        .addrList-label{
+            font-size: medium;
+        }
+        .mb-5{
+            margin-bottom: 5px;
+        }
+        .mb-10{
+            margin-bottom: 10px;
+        }
+        textarea#addrList{
+            min-width: 60%;
+            max-width: 60%;
+            min-height: 100px;
+            max-height: 200px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    
+    <header>
+        <h2>주소를 좌표로 변환</h2>
+    </header>
+    <p>
+        <button type="button" style="WIDTH: 140pt; HEIGHT: 20pt; font-size: 12px" onclick="location.href='address.html' ">좌표를 주소로 변환 바로가기</button>
+        <button type="button" style="WIDTH: 120pt; HEIGHT: 20pt; font-size: 12px" onclick="location.href='address.xlsx' ">엑셀 샘플 파일 내려받기</button>
+    </p>
+    <article>
+        <div class="mb-10">
+            <label for="addrList" class="addrList-label mb-5">주소 목록 입력 : </label>
+            <br/>
+            <textarea type="text" id="addrList"></textarea>
+            <button type="button" id="searchButton">검색</button>
+        </div>
+        <div>
+            <table id="resultTable" class="mb-10">
+                <colgroup>
+                    <col width="10%" />
+                    <col width="" />
+                    <col width="" />
+                    <col width="" />
+                    <col width="5%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>이름</th>
+                        <th>입력주소</th>
+                        <th>위도</th>
+                        <th>경도</th>
+                        <th>위치표시</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div id="map" style="margin: 0px; width:100%; height:800px;"></div>
+     </article>
+
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3a7857a3bd564cf642a647203f178f40&libraries=services"></script>
+    <script>
+            document.getElementById("searchButton").addEventListener("click", searchButtonClickHandler);
+
+/* ############ 카카오 맵 API ############ */
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+mapOption = {
+    center: new kakao.maps.LatLng(37.546342, 127.192786), // 지도의 중심좌표(회사)
+    level: 6 // 지도의 확대 레벨
+};
+var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+var mapTypeControl = new kakao.maps.MapTypeControl();
+map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+/* ############ 카카오 맵 API ############ */
+        //지오코딩 결과값 출력할 테이블태그 아이디
+        const TABLE_ID = "resultTable"
+        //html 로드완료 이벤트 설정
+//        document.addEventListener("DOMContentLoaded", contentLoadedHandler);
+        //검색버튼 이벤트 함수
+        function searchButtonClickHandler(){
+            var addrListTxt = document.getElementById("addrList").value;
+            //텍스트 -> Map Array
+            addrList = addrListParse(addrListTxt);
+            geocodingAndResultDisplay(addrList);
+        }
+
+//클릭한 지점 위경도 표시하기
+    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
+    // 클릭한 위도, 경도 정보를 가져옵니다 
+    var latlng = mouseEvent.latLng;
+    var message = latlng.getLat() + ', ';
+    message += + latlng.getLng();
+    var resultDiv = document.getElementById('result'); 
+    resultDiv.innerHTML = message;
+
+ //   var link = 'https://map.kakao.com/link/to/목적지,'+ message;
+ //   document.getElementById("link").setAttribute("href",link);
+
+    displayMarker3(latlng);
+});
+
+// 센터이동없이 마커 표시하기
+function displayMarker3(locPosition) {
+    var imageSrc = 'https://jongdukjung.github.io/jongdukjung/biotope/target.png'; // 마커이미지의 주소입니다   
+    var imageSize = new kakao.maps.Size(12, 12); 
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
+	var marker = new kakao.maps.Marker({  
+        map: map, 
+        position: locPosition,
+		image: markerImage
+    }); 
+    kakao.maps.event.addListener(marker, 'click', function() {
+        marker.setVisible(false);
+        marker = null;
+    });
+}  
+
+        //테이블로 출력
+        function displayAddrList(addrList){
+            var tableContainer = document.querySelector("#"+TABLE_ID+">tbody");
+            console.log(addrList);
+            var tableRows = "";
+            for(var i in addrList){
+
+                var lat = addrList[i].y, // 위도
+                    lon = addrList[i].x; // 경도
+                var locPosition = new kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치를 얻어온 좌표로 생성합니다
+                var text2= "'"+addrList[i].index+"'";
+
+                tableRows +=    "<tr>"+
+                                    "<td>"+addrList[i].index+"</td>"+
+                                    "<td>"+addrList[i].addr+"</td>"+
+                                    "<td>"+addrList[i].y+"</td>"+
+                                    "<td>"+addrList[i].x+"</td>"+
+                                    "<td><button onclick='displayMarker("+lat+","+lon+")'>위치표시</button> </td>"+
+                                "</tr>";
+                // 지도에 출력
+                var imageSrc = 'https://jongdukjung.github.io/jongdukjung/biotope/target.png';
+                var imageSize = new kakao.maps.Size(12, 12); 
+                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
+	              var marker = new kakao.maps.Marker({  
+                    map: map, 
+                    position: locPosition,
+		                image: markerImage,
+                  
+                })
+            }
+            tableContainer.innerHTML = tableRows;
+   
+
+        }
+
+        //text -> Map Array
+        function addrListParse(addrListTxt){
+            var txtRows = addrListTxt.split("\n");
+            var resultList = [];
+            for(var i in txtRows){
+                //빈 행 제거
+                if(txtRows[i] == "") continue;
+                
+                //열 분리
+                var row = {};
+                const arrRow = txtRows[i].split("\t");
+                row.index = arrRow[0];
+                row.addr = arrRow[1];
+
+                resultList.push(row);
+            }
+            return resultList;
+        }
+
+        //지오코딩 함수
+        function geocodingAndResultDisplay(addrList){
+            var geocoder = new kakao.maps.services.Geocoder();
+            var count = 0;
+            const i = 0;
+            for(const i in addrList){
+                console.log(addrList[i], i);
+                geocoder.addressSearch(addrList[i].addr, function(result, status){
+                    //정상처리되었을 때
+                    if(status === kakao.maps.services.Status.OK){
+                        addrList[i].x = result[0].x;
+                        addrList[i].y = result[0].y;
+                        console.log(addrList[i],i);
+                    }
+                    count++;
+
+                    //일괄변환이 끝났을 때
+                    if(count == addrList.length){
+                        displayAddrList(addrList);
+                    }
+                });
+            }
+            
+        }
+   
+
+
+  // 마커 표시하고 센터 이동하기
+function displayMarker(lat, lon) {
+    var imageSrc = 'https://jongdukjung.github.io/jongdukjung/biotope/current.png';
+    var imageSize = new kakao.maps.Size(12, 12); 
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
+    var locPosition = new kakao.maps.LatLng(lat, lon);
+  	var marker = new kakao.maps.Marker({  
+        map: map, 
+        position: locPosition,
+	    	image: markerImage
+    }); 
+  map.setCenter(locPosition);      
+}  
+        
+    </script>
+           <p id="result"></p>
+</body>
+</html>
