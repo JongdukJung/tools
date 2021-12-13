@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width">
+    <title>학명 이탤릭체 변환(동물)</title>
+    <style>
+		header {padding: 10px; font-size: 20px; background: #F2F2F2;}
+		article {padding: 10px; font-size: 14px;}
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            padding: 3px;
+            border: 1px solid #dadada;
+        }
+        td {
+            padding: 3px;
+            border: 1px solid #dadada;
+        }
+        .plantlist-label{
+            font-size: medium;
+        }
+        .mb-5{
+            margin-bottom: 5px;
+        }
+        .mb-10{
+            margin-bottom: 10px;
+        }
+        textarea#plantlist{
+            min-width: 60%;
+            max-width: 60%;
+            min-height: 100px;
+            max-height: 200px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>학명 이탤릭체 변환(동물)</h2>
+    </header>
+    <p>
+        <button type="button" style="WIDTH: 180pt; HEIGHT: 20pt; font-size: 12px" onclick="location.href='SciNameItalic_plant.html' ">학명 이탤릭체 변환(식물)</button>
+    </p>
+    <article>
+        <div class="mb-10">
+            <label for="plantlist" class="plantlist-label mb-5">학명 목록 : </label>
+            <br/>
+            <textarea type="text" id="plantlist"></textarea>
+            <button type="button" id="searchButton">변환</button>
+        </div>
+        <div>
+            <table id="resultTable" class="mb-10">
+                <colgroup>
+                    <col width="50%" />
+                    <col width="50%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>학명</th>
+                        <th>비고</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </article>
+
+    
+    <script>
+          document.getElementById("searchButton").addEventListener("click", searchButtonClickHandler);
+          
+      //변환 결과값 출력할 테이블태그 아이디
+        const TABLE_ID = "resultTable"
+       
+      //변환버튼 이벤트 함수
+        function searchButtonClickHandler(){
+            var plantlistTxt = document.getElementById("plantlist").value;
+            
+      //학명 이탤릭체 변환
+            plantlistParse(plantlistTxt);
+            
+        }
+
+        //text -> Map Array
+        function plantlistParse(plantlistTxt){
+            var tableContainer = document.querySelector("#"+TABLE_ID+">tbody");
+            var tableRows = "";
+            var regions = [];
+            var txtRows = plantlistTxt.split("\n");
+                for(var i in txtRows){
+                txtRows[i].trim();
+                //빈 행 제거
+                if(txtRows[i] == "") continue;
+                //학명 나누기
+                const arrRow = txtRows[i].split(" ");
+                
+                //부분별 이탤릭 전환
+                
+                var word1 = /\./;
+                var word2 = /^[A-Z]/;
+                var word3 = /[1-9]/;
+                var word4 = /^\(/;
+                var x=0;
+                var note="";
+                for(var j in arrRow){
+                    arrRow[j].trim();
+                    if(arrRow[j].match(word1)){
+                    }
+                    else if(arrRow[j].match(word2)){
+                        if(x==0){
+                            arrRow[j]='<em>'+arrRow[j]+'</em>';
+                        }
+                    }
+                    else if(arrRow[j].match(word3)){x++; break;}
+                    else if(arrRow[j]=='and'){x++; break;}
+                    else if(arrRow[j]=='ex'){x++; break;}
+                    else if(arrRow[j]=='&'){x++; break;}
+                    else if(arrRow[j]=='et'){x++; break;}
+                    else if(arrRow[j]=='van'){x++; break;}
+                    else if(arrRow[j]=='der'){x++; break;}
+                    else if(arrRow[j]=='de'){x++; break;}
+                    else if(arrRow[j].match(word4)){
+                        if(x==1){
+                            arrRow[j]=arrRow[j].replace('(','');
+                            arrRow[j]=arrRow[j].replace(')','');
+                            arrRow[j]='(<em>'+arrRow[j]+'</em>)';
+                        }
+                    }
+                    else{
+                        arrRow[j]='<em>'+arrRow[j]+'</em>';
+                    }
+                    x++;
+                }
+                var sciname = arrRow.join(" ");
+
+                tableRows +=    "<tr>"+
+                                    "<td>"+sciname+"</td>"+
+                                    "<td>"+note+"</td>"+
+                                "</tr>";
+                //console.log(sciname);                
+                sciname="";
+                note="";
+                }
+            
+
+            tableContainer.innerHTML = tableRows; 
+
+            
+            }
+     
+    </script>
+</body>
+</html>
