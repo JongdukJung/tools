@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width">
+    <title>학명 이탤릭체 변환(식물)</title>
+    <style>
+		header {padding: 10px; font-size: 20px; background: #F2F2F2;}
+		article {padding: 10px; font-size: 14px;}
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            padding: 3px;
+            border: 1px solid #dadada;
+        }
+        td {
+            padding: 3px;
+            border: 1px solid #dadada;
+        }
+        .plantlist-label{
+            font-size: medium;
+        }
+        .mb-5{
+            margin-bottom: 5px;
+        }
+        .mb-10{
+            margin-bottom: 10px;
+        }
+        textarea#plantlist{
+            min-width: 60%;
+            max-width: 60%;
+            min-height: 100px;
+            max-height: 200px;
+            font-size: 12px;
+        }
+    </style>
+    <style> h5 {color : #FF0000;} </style>
+</head>
+<body>
+    <header>
+        <h2>학명 이탤릭체 변환(식물)</h2>
+    </header>
+    <p>
+        <button type="button" style="WIDTH: 180pt; HEIGHT: 20pt; font-size: 12px" onclick="location.href='SciNameItalic_animal.html' ">학명 이탤릭체 변환(동물) 바로가기</button>
+    </p>
+    <article>
+        <div class="mb-10">
+            <label for="plantlist" class="plantlist-label mb-5">학명 목록 : </label>
+            <br/>
+            <textarea type="text" id="plantlist"></textarea>
+            <button type="button" id="searchButton">변환</button>
+        </div>
+        <div>
+            <table id="resultTable" class="mb-10">
+                <colgroup>
+                    <col width="50%" />
+                    <col width="50%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>학명</th>
+                        <th>비고</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </article>
+
+    
+    <script>
+          document.getElementById("searchButton").addEventListener("click", searchButtonClickHandler);
+          
+      //변환 결과값 출력할 테이블태그 아이디
+        const TABLE_ID = "resultTable"
+       
+      //변환버튼 이벤트 함수
+        function searchButtonClickHandler(){
+            var plantlistTxt = document.getElementById("plantlist").value;
+            
+      //학명 이탤릭체 변환
+            plantlistParse(plantlistTxt);
+            
+        }
+
+        //text -> Map Array
+        function plantlistParse(plantlistTxt){
+            var tableContainer = document.querySelector("#"+TABLE_ID+">tbody");
+            var tableRows = "";
+            var regions = [];
+            var txtRows = plantlistTxt.split("\n");
+                for(var i in txtRows){
+                txtRows[i].trim();
+                //빈 행 제거
+                if(txtRows[i] == "") continue;
+                //학명 나누기
+                const arrRow = txtRows[i].split(" ");
+                
+                var note="";
+                var otherch = /[ㄱ-ㅎㅏ-ㅣ가-힣0-9!?@#$%^&*():;+=~{}<>\_\[\]\|\\\"\'\,\.\/\`\\]/;
+                var upchstart = /^[A-Z]/;
+                var lowchstart = /^[a-z]/;
+
+                var infrasp1='subsp.';
+                var infrasp2='ssp.';
+                var infrasp3='var.';
+                var infrasp4='v.';
+                var infrasp5='f.';
+                var infrasp6='for.';
+                var infrasp7='×';
+                var infrasp8='x';
+
+                
+                //부분별 이탤릭 전환
+                //속명 검토
+                if(arrRow[0]){
+                    if(arrRow[0].match(otherch)){
+                        arrRow[0] = '<b>'+arrRow[0]+'</b>';
+                        note = note + '속명 비라틴문자 포함;';  
+                    }
+                    else if(arrRow[0].match(lowchstart)) {
+                        arrRow[0] = '<b>'+arrRow[0]+'</b>';
+                        note = note + '속명 소문자 시작;'; 
+                    }
+                    else{
+                    arrRow[0]='<em>'+arrRow[0]+'</em>';
+                    }
+                }
+                
+                //종소명 검토
+                if(arrRow[1]){             
+                    if(arrRow[1]==infrasp7){}
+                    else if(arrRow[1]==infrasp8){}
+                    else if(arrRow[1].match(otherch)){note = note + '종소명 비라틴문자 포함;';arrRow[1] = '<b>'+arrRow[1]+'</b>';}
+                    else if(arrRow[1].match(upchstart)){note = note + '종소명 대문자 시작;';arrRow[1] = '<b>'+arrRow[1]+'</b>';}
+                    else {arrRow[1]='<em>'+arrRow[1]+'</em>';}
+                }
+
+                //종소명 이하 검토
+                
+
+                var x=0;
+                for(var j in arrRow){
+                    arrRow[j].trim();
+                    x++;
+                    if(arrRow[j]==infrasp1){
+                        if(arrRow[x]){
+                            if(arrRow[x].match(otherch)){note = note + '아종명 비라틴문자 포함;';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else if(arrRow[x].match(upchstart)){note = note + '아종명 대문자 시작;';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else {arrRow[x]='<em>'+arrRow[x]+'</em>';}
+                        }
+                        else{note = note + '아종명 없음;';}
+                    }
+                    else if(arrRow[j]==infrasp2){
+                        if(arrRow[x]){
+                            if(arrRow[x].match(otherch)){note = note + '아종명 비라틴문자 포함;';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else if(arrRow[x].match(upchstart)){note = note + '아종명 대문자 시작;';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else {arrRow[x]='<em>'+arrRow[x]+'</em>'; arrRow[j] = infrasp1;}
+                        }
+                        else{note = note + '아종명 없음;';}
+                    }
+                    else if(arrRow[j]==infrasp3){
+                        if(arrRow[x]){
+                            if(arrRow[x].match(otherch)){note = note + '변종명 비라틴문자 포함;';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else if(arrRow[x].match(upchstart)){note = note + '변종명 대문자 시작;';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else {arrRow[x]='<em>'+arrRow[x]+'</em>';}
+                        }
+                        else{note = note + '변종명 없음;';}
+                    }
+                    else if(arrRow[j]==infrasp4){
+                        if(arrRow[x]){
+                            if(arrRow[x].match(otherch)){note = note + '변종명 비라틴문자 포함;';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else if(arrRow[x].match(upchstart)){note = note + '변종명 대문자 시작;';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else {arrRow[x]='<em>'+arrRow[x]+'</em>'; arrRow[j] = infrasp3;}
+                        }
+                        else{note = note + '변종명 없음;';}
+                    }
+                    else if(arrRow[j]==infrasp5){
+                        if(arrRow[x]){
+                            if(arrRow[x].match(otherch)){note = note + '품종명 비라틴문자 포함(명명자 가능);';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else if(arrRow[x].match(upchstart)){note = note + '품종명 대문자 시작(명명자 가능);';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else {arrRow[x]='<em>'+arrRow[x]+'</em>';}
+                        }
+                        else{note = note + '품종명 없음(명명자 가능);';}
+                    }
+                    else if(arrRow[j]==infrasp6){
+                        if(arrRow[x]){
+                            if(arrRow[x].match(otherch)){note = note + '품종명 비라틴문자 포함(명명자 가능);';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else if(arrRow[x].match(upchstart)){note = note + '품종명 대문자 시작(명명자 가능);';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else {arrRow[x]='<em>'+arrRow[x]+'</em>'; arrRow[j] = infrasp5;}
+                        }
+                        else{note = note + '품종명 없음(명명자 가능);';}
+                    }
+                    else if(arrRow[j]==infrasp7){
+                        if(arrRow[x]){
+                            if(arrRow[x].match(otherch)){note = note + '잡종명 비라틴문자 포함;';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else if(arrRow[x].match(upchstart)){note = note + '잡종명 대문자 시작;';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else {arrRow[x]='<em>'+arrRow[x]+'</em>'; arrRow[j] = infrasp7;}
+                        }
+                        else{note = note + '잡종명 없음;';}
+                    }
+                    else if(arrRow[j]==infrasp8){
+                        if(arrRow[x]){
+                            if(arrRow[x].match(otherch)){note = note + '잡종명 비라틴문자 포함;';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else if(arrRow[x].match(upchstart)){note = note + '잡종명 대문자 시작;';arrRow[x] = '<b>'+arrRow[x]+'</b>';}
+                            else {arrRow[x]='<em>'+arrRow[x]+'</em>'; arrRow[j] = infrasp7;}
+                        }
+                        else{note = note + '잡종명 없음;';}
+                    }
+                }
+                var sciname = arrRow.join(" ");
+                tableRows +=    "<tr>"+
+                                    "<td>"+sciname+"</td>"+
+                                    "<td>"+note+"</td>"+
+                                "</tr>";
+                //console.log(sciname);                
+                sciname="";
+                note="";
+            }
+
+            tableContainer.innerHTML = tableRows; 
+
+            
+            }
+     
+    </script>
+</body>
+</html>
