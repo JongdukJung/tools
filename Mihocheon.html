@@ -274,7 +274,7 @@ kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
 
 // 도시 경계 표시하기
 var boundary = new XMLHttpRequest();
-boundary.open('GET', '/TOOLS/data/Mihocheon/chungju2_boundary.txt', true);
+boundary.open('GET', '/data/Mihocheon/chungju2_boundary.txt', true);
 boundary.overrideMimeType('text/plain; charset=utf-8');
 boundary.onload = function() {
     if (boundary.status == 200) {
@@ -287,7 +287,7 @@ boundary.send(null);
 
 //지도에 조사구간 표시하기
 var rectangle = new XMLHttpRequest();
-rectangle.open('GET', '/TOOLS/data/Mihocheon/survey_polygon.txt', true);
+rectangle.open('GET', '/data/Mihocheon/survey_polygon.txt', true);
 rectangle.overrideMimeType('text/plain; charset=utf-8');
 rectangle.onload = function() {
     if (rectangle.status == 200) {
@@ -299,7 +299,7 @@ rectangle.send(null);
 
 //조사구간 번호 표시하기
 var pointText1 = new XMLHttpRequest();
-pointText1.open('GET', '/TOOLS/data/Mihocheon/survey_polygon_center.txt', true);
+pointText1.open('GET', '/data/Mihocheon/survey_polygon_center.txt', true);
 pointText1.overrideMimeType('text/plain; charset=utf-8');
 pointText1.onload = function() {
     if (pointText1.status == 200) {
