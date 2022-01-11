@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<style type="text/css"> html, body { margin: 0px; height:100%; overflow:hidden; }  </style>
+             <style> h1 {color : #0101DF; font-weight: bold; font-size: 12pt;} </style>
+             <style> h2 {color : #df9101; font-weight: bold; font-size: 12pt;} </style>
+             <style> h3 {color : #008800; font-weight: bold; font-size: 12pt;} </style>
+             <style> h4 {color : #FFF000; font-size: 11pt;} </style>
+             <style> h5 {color : #FF0000; background-color: rgba(255, 255, 255, 0.5 ); font-size: 10pt;} </style>
+
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>미호천 무심천 생물다양성 정밀조사</title>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3a7857a3bd564cf642a647203f178f40"></script>
+    
+</head>
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width">
+
+<body>
+<div id="map" style="margin: 0px; width:100%; height:80%;"></div>
+<p>
+    <button onclick="displayMarker2()">현재 위치</button> 
+    <button onclick="moveCenter()">청주시청</button>
+    <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
+    <a id="link">길 찾기</a>
+</p>
+<p id="result2"></p>    
+<p id="result"></p>
+<script>
+//==============================================================================================
+//FUNCTION
+//==============================================================================================
+
+// HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
+function displayMarker2() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+        var lat = position.coords.latitude, // 위도
+            lon = position.coords.longitude; // 경도
+        var locPosition = new kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+        displayMarker(locPosition);
+    });
+    }
+    else { // HTML5의 GeoLocation을 사용할 수 없을 때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+    alert('현재 위치를 알 수 없습니다');
+	var locPosition = mapCenter; // 지도의 중심 좌표(청주시청)
+        displayMarker(locPosition);
+    }
+}
+
+// 마커 표시하고 센터 이동하기
+var marker2= new kakao.maps.Marker();
+function displayMarker(locPosition) {
+    marker2.setMap(null);
+    var imageSrc = 'https://jongdukjung.github.io/jongdukjung/biotope/current.png'; // 마커이미지의 주소입니다   
+    var imageSize = new kakao.maps.Size(12, 12); 
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
+	marker2 = new kakao.maps.Marker({  
+        map: map, 
+        position: locPosition,
+		image: markerImage
+    }); 
+	marker2.setMap(map);
+    map.setCenter(locPosition);      
+}
+
+// 센터이동없이 마커 표시하기
+var marker3= new kakao.maps.Marker();
+function displayMarker3(locPosition) {
+    marker3.setMap(null);
+    var imageSrc = 'https://jongdukjung.github.io/jongdukjung/biotope/target.png'; // 마커이미지의 주소입니다   
+    var imageSize = new kakao.maps.Size(12, 12); 
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
+	marker3 = new kakao.maps.Marker({  
+        map: map, 
+        position: locPosition,
+		image: markerImage
+    });
+    marker3.setMap(map);
+    //kakao.maps.event.addListener(marker, 'click', function() {
+    //    marker.setVisible(false);
+    //    marker = null;
+    //});
+}  
+
+// 청주시청으로 이동
+function moveCenter(){
+var locPosition = mapCenter; // 지도의 중심좌표(청주시청)
+map.setCenter(locPosition);   
+}
+
+// 도시 경계 그리기
+function drawBoundary(boundaryPath){
+    var polygon3 = new kakao.maps.Polygon({
+            path: boundaryPath, // 그려질 다각형의 좌표 배열입니다
+            strokeWeight: 2, // 선의 두께입니다
+            strokeColor: '#0404B4', // 선의 색깔입니다
+            strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+            fillOpacity: 0 // 채우기 불투명도 입니다
+        });
+        polygon3.setMap(map);
+}
+
+// 격자 그리기
+function drawPolygon(polygonPaths){
+    for (var i = 0; i < polygonPaths.length; i ++) {
+        var polygon = new kakao.maps.Polygon({
+            path: polygonPaths[i], // 그려질 다각형의 좌표 배열입니다
+            strokeWeight: 1, // 선의 두께입니다
+            strokeColor: '#0101DF', // 선의 색깔입니다
+            strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+            fillColor: '#A2FF99', // 채우기 색깔입니다
+            fillOpacity: 0 // 채우기 불투명도 입니다
+        });
+        polygon.setMap(map);
+    };
+}
+
+// 지도에 표시할 다각형을 생성합니다
+function drawPolygon2(polygonPaths){
+    for (var i = 0; i < polygonPaths.length; i ++) {
+        var polygon = new kakao.maps.Polygon({
+            path: polygonPaths[i], // 그려질 다각형의 좌표 배열입니다
+            strokeWeight: 1, // 선의 두께입니다
+            strokeColor: '#FF0000', // 선의 색깔입니다
+            strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+            fillColor: '#A2FF99', // 채우기 색깔입니다
+            fillOpacity: 0 // 채우기 불투명도 입니다
+        });
+        polygon.setMap(map);
+    };
+}
+
+//지도에 텍스트 표시하기
+function drawText(coordList){
+    for (var i = 0; i < coordList.length; i ++) {
+        var customOverlay = new kakao.maps.CustomOverlay({
+            position: coordList[i].latlng,
+            content: coordList[i].title
+        });
+        customOverlay.setMap(map);
+    };
+}
+//지도에 노란점 표시하기
+function drawPoint(coordList){
+    var imageSrc = 'https://jongdukjung.github.io/jongdukjung/biotope/yellow.png'; // 마커이미지의 주소입니다   
+    var imageSize = new kakao.maps.Size(12, 12); 
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
+    for (var i = 0; i < coordList.length; i ++) {
+            var marker = new kakao.maps.Marker({  
+            map: map, 
+            position: coordList[i].latlng,
+		    image: markerImage
+        }); 
+        //customOverlay.setMap(map);
+    };
+}
+
+/*
+// 폴리곤 텍스트 및 중심점 표시하기(끄기 켜기 포함)
+var polygonNameVisible = false;
+var coordList2=[];
+
+//폴리곤 이름 켜고 끄기
+function polygonNameClickHandler(){
+    console.log("polygonNameClickHandler() call")
+    if(polygonNameVisible == true){
+        offName();
+        polygonNameVisible = false;
+        document.getElementById("polygonNameBtn").innerText = "폴리곤이름 켜기";
+    }else if(polygonNameVisible == false){
+        onName();
+        polygonNameVisible = true;
+        document.getElementById("polygonNameBtn").innerText = "폴리곤이름 끄기";
+    };
+};
+
+
+// 폴리곤 이름 좌표 불러오기
+var pointText3 = new XMLHttpRequest();
+pointText3.open('GET', '/jongdukjung/tools/data/chungju3_polygon_center.txt', true);
+//pointText3.open('GET', '/tools/data/chungju2_polygon_center.txt', true);
+pointText3.overrideMimeType('text/plain; charset=utf-8');
+pointText3.onload = function() {
+    if (pointText3.status == 200) {
+        coordList2 = eval(pointText3.responseText);
+    };
+};
+pointText3.send(null);
+
+var polygonNameArr = [];
+
+function onName() {
+    console.log("onName() call")
+    if(polygonNameArr.length == 0){
+        for (var i = 0; i < coordList2.length; i ++) {
+            // 커스텀 오버레이를 생성합니다
+            var customOverlay = new kakao.maps.CustomOverlay({
+                position: coordList2[i].latlng,
+                content: coordList2[i].title
+            });
+            customOverlay.setMap(map);
+            polygonNameArr.push(customOverlay);
+        };
+    } else if(polygonNameArr.length > 0) {
+        for(var i in polygonNameArr){
+            polygonNameArr[i].setVisible(true);
+        }
+    }
+};
+
+function offName(){
+    console.log("offName() call")
+    if(polygonNameArr.length > 0) {
+        for(var i in polygonNameArr){
+            polygonNameArr[i].setVisible(false);
+        }
+    }
+};
+
+*/
+
+
+
+//==============================================================================================
+//==============================================================================================
+
+var mapCenter = new kakao.maps.LatLng(36.642527, 127.488958);
+
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = { 
+        center: mapCenter, // 지도의 중심좌표(청주시청)
+        level: 8 // 지도의 확대 레벨
+    };  
+
+var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+// 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+var mapTypeControl = new kakao.maps.MapTypeControl();
+
+// 지도에 컨트롤 추가
+map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+
+// 클릭 위치표시
+kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
+    // 클릭한 위도, 경도 정보를 가져옵니다 
+    var latlng = mouseEvent.latLng;
+    var currentLat = latlng.getLat();
+    var currentLng = latlng.getLng();
+    currentLat=currentLat.toFixed(6);
+    currentLng=currentLng.toFixed(6);
+    var message = currentLat + ', ';
+    message += + currentLng;
+    var link = 'https://map.kakao.com/link/to/목적지,'+ message;
+    document.getElementById("link").setAttribute("href",link);
+
+    var resultDiv = document.getElementById('result'); 
+    resultDiv.innerHTML = message;
+    
+    var latDeg=Math.floor(currentLat);
+    var latMin=Math.floor((currentLat-latDeg)*60);
+    var prelatSec=((currentLat-latDeg)*60-latMin)*60;
+    var latSec=prelatSec.toFixed(2);
+    var lngDeg=Math.floor(currentLng);
+    var lngMin=Math.floor((currentLng-lngDeg)*60);
+    var prelngSec=((currentLng-lngDeg)*60-lngMin)*60;
+    var lngSec=prelngSec.toFixed(2);
+    const linesep = "\n\n"
+    message2 =latDeg +"°" + latMin +"′" + latSec+"″, " + lngDeg +"°" + lngMin +"′" + lngSec+"″"; 
+    var result2Div = document.getElementById('result2'); 
+    result2Div.innerHTML = message2;
+    displayMarker3(latlng);
+});
+
+// 도시 경계 표시하기
+var boundary = new XMLHttpRequest();
+boundary.open('GET', '/tools/data/Mihocheon/chungju2_boundary.txt', true);
+boundary.overrideMimeType('text/plain; charset=utf-8');
+boundary.onload = function() {
+    if (boundary.status == 200) {
+        var boundaryPath = eval(boundary.responseText);
+        drawBoundary(boundaryPath); 
+    };
+};
+boundary.send(null);
+
+
+//지도에 조사구간 표시하기
+var rectangle = new XMLHttpRequest();
+rectangle.open('GET', '/tools/data/Mihocheon/survey_polygon.txt', true);
+rectangle.overrideMimeType('text/plain; charset=utf-8');
+rectangle.onload = function() {
+    if (rectangle.status == 200) {
+        var rectanglePath = eval(rectangle.responseText);
+        drawPolygon(rectanglePath);
+    };
+};
+rectangle.send(null);
+
+//조사구간 번호 표시하기
+var pointText1 = new XMLHttpRequest();
+pointText1.open('GET', '/tools/data/Mihocheon/survey_polygon_center.txt', true);
+pointText1.overrideMimeType('text/plain; charset=utf-8');
+pointText1.onload = function() {
+    if (pointText1.status == 200) {
+        var coordList1 = eval(pointText1.responseText);
+        drawText(coordList1);
+    };
+};
+pointText1.send(null);
+
+// 폴리곤 표시하기
+/*
+var polygon1 = new XMLHttpRequest();
+polygon1.open('GET', '/jongdukjung/tools/data/chungju3_polygon.txt', true);
+//polygon1.open('GET', '/tools/data/chungju2_polygon.txt', true);
+polygon1.overrideMimeType('text/plain; charset=utf-8');
+polygon1.onload = function() {
+    if (polygon1.status == 200) {
+        var polygonPaths = eval(polygon1.responseText);
+        drawPolygon2(polygonPaths);
+    };
+};
+polygon1.send(null);
+*/
+
+</script>
+</body>
+</html>
