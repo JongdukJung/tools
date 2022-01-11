@@ -101,7 +101,7 @@ function drawBoundary(boundaryPath){
         polygon3.setMap(map);
 }
 
-// 폴리곤 만들고 이벤트 등록
+// 폴리곤 만들기
 function drawPolygon(polygonPaths){
     for (var i = 0; i < polygonPaths.length; i ++) {
         var polygon = new kakao.maps.Polygon({
@@ -114,28 +114,6 @@ function drawPolygon(polygonPaths){
         });
         polygon.setMap(map);
     };
-//____________________________
-// 다각형에 mouseover 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 변경합니다 
-
-
-
-// 다각형에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
-
-// 다각형에 click 이벤트를 등록하고 이벤트가 발생하면 다각형의 이름과 면적을 인포윈도우에 표시합니다 
-kakao.maps.event.addListener(polygon, 'dblclick', function(mouseEvent) {
-    polygon.setOptions({fillColor: '#FFF000'});
-    polygon.setMap(map);
-    var content = '<div class="info">' + 
-                '   <div class="title">' + area.name + '</div>' +
-                '   <div class="size">총 면적 : 약 ' + Math.floor(polygon.getArea()) + ' m<sup>2</sup></area>' +
-                '</div>';
-
-    infowindow.setContent(content); 
-    infowindow.setPosition(mouseEvent.latLng); 
-    infowindow.setMap(map);
-});
-
-//-----------------------------------
 }
 
 function displayArea(area) {
@@ -150,9 +128,30 @@ var polygon = new kakao.maps.Polygon({
     fillColor: '#fff',
     fillOpacity: 0.7 
 });
+//____________________________
 
 
+// 다각형에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
+// 커스텀 오버레이를 지도에서 제거합니다 
+kakao.maps.event.addListener(polygon, 'mouseout', function() {
+    polygon.setOptions({fillColor: '#fff'});
+    customOverlay.setMap(null);
+}); 
 
+// 다각형에 click 이벤트를 등록하고 이벤트가 발생하면 다각형의 이름과 면적을 인포윈도우에 표시합니다 
+kakao.maps.event.addListener(polygon, 'click', function(mouseEvent) {
+    var content = '<div class="info">' + 
+                '   <div class="title">' + area.name + '</div>' +
+                '   <div class="size">총 면적 : 약 ' + Math.floor(polygon.getArea()) + ' m<sup>2</sup></area>' +
+                '</div>';
+
+    infowindow.setContent(content); 
+    infowindow.setPosition(mouseEvent.latLng); 
+    infowindow.setMap(map);
+});
+}
+
+//-----------------------------------
 
 
 
