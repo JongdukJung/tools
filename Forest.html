@@ -314,7 +314,7 @@ kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
 
 // 도시 경계 표시하기
 var boundary = new XMLHttpRequest();
-boundary.open('GET', '/tools/data/Mihocheon/chungju2_boundary.txt', true);
+boundary.open('GET', 'https://jongdukjung.github.io/tools/data/Mihocheon/chungju2_boundary.txt', true);
 boundary.overrideMimeType('text/plain; charset=utf-8');
 boundary.onload = function() {
     if (boundary.status == 200) {
@@ -327,7 +327,7 @@ boundary.send(null);
 
 //지도에 조사구간 표시하기
 var rectangle = new XMLHttpRequest();
-rectangle.open('GET', '/tools/data/Mihocheon/survey_polygon2.txt', true);
+rectangle.open('GET', 'https://jongdukjung.github.io/tools/data/Mihocheon/survey_polygon2.txt', true);
 rectangle.overrideMimeType('text/plain; charset=utf-8');
 rectangle.onload = function() {
     if (rectangle.status == 200) {
