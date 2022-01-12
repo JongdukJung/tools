@@ -138,7 +138,7 @@ function displayArea(polygonPaths) {
     });
    
 // 폴리곤 클릭시 작동
-
+polygon.setMap(null);
     kakao.maps.event.addListener(polygon, 'click', function(mouseEvent) {
         polygon.setOptions({ fillColor: '#0101DF', fillOpacity: 0.3});   
         /*
