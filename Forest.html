@@ -19,7 +19,7 @@
 <body>
 <div id="map" style="margin: 0px; width:100%; height:80%;"></div>
 <p>
-    <button onclick="displayMarker2()">현재 위치</button> 
+    <button id="traceBtn" onclick="traceClickHandler()">현재위치 추적 시작</button>
     <button onclick="moveCenter()">청주시청</button>
     <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
     <a id="link">길 찾기</a>
@@ -32,11 +32,24 @@
 //FUNCTION
 //==============================================================================================
 
-// HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
+// 현재위치 추적 시작-끄기
 var options = {
   enableHighAccuracy: true,
   timeout: 5000,
   maximumAge: 0
+};
+var tracing = true;
+var watchid;
+function traceClickHandler(){
+    if(tracing == true){
+        traceStop();
+        tracing = false;
+        document.getElementById("traceBtn").innerText = "현재위치 추적 시작";
+    }else if(tracing == false){
+        traceStart();
+        tracing = true;
+        document.getElementById("traceBtn").innerText = "현재위치 추적 중지";
+    };
 };
 function success(position) {
     var lat = position.coords.latitude, // 위도
@@ -49,12 +62,12 @@ function error(err) {
 	var locPosition = mapCenter; // 지도의 중심 좌표(청주시청)
         displayMarker(locPosition);
 }
-function displayMarker2() {
-id = navigator.geolocation.watchPosition(success, error, options);
+function traceStart() {
+ watchid = navigator.geolocation.watchPosition(success, error, options);
 }
-
-//navigator.geolocation.clearWatch(id);
-
+function traceStop() {
+    navigator.geolocation.clearWatch(watchid);
+}
 /*
 function displayMarker2() {
     if (navigator.geolocation) {
@@ -123,7 +136,6 @@ function drawBoundary(boundaryPath){
 function drawPolygon(polygonPaths){
     for (var i = 0; i < polygonPaths.length; i ++) { displayArea(polygonPaths[i]);}
 }
-//var marker4 = new kakao.maps.Marker();
 var pastpolygon = new kakao.maps.Polygon();
 function displayArea(polygonPaths) {
     var stroCol ='#0101DF';
