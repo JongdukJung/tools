@@ -5,7 +5,7 @@
              <style> h3 {color : #008800; font-weight: bold; font-size: 12pt;} </style>
              <style> h4 {color : #FFF000; font-size: 11pt;} </style>
              <style> h5 {color : #FF0000; background-color: rgba(255, 255, 255, 0.5 ); font-size: 10pt;} </style>
-
+             <style> h6 {color : #ffffff; background-color: rgba(255, 255, 255, 0.5 ); font-size: 10pt;} </style>
 
 <html>
 <head>
@@ -26,6 +26,7 @@
 </p>
 <p id="result2"></p>    
 <p id="result"></p>
+<p id="result3"></p>
 <script>
 //==============================================================================================
 //FUNCTION
@@ -77,18 +78,12 @@ function displayMarker3(locPosition) {
 		image: markerImage
     });
     marker3.setMap(map);
-    //kakao.maps.event.addListener(marker, 'click', function() {
-    //    marker.setVisible(false);
-    //    marker = null;
-    //});
 }  
-
 // 청주시청으로 이동
 function moveCenter(){
 var locPosition = mapCenter; // 지도의 중심좌표(청주시청)
 map.setCenter(locPosition);   
 }
-
 // 도시 경계 그리기
 function drawBoundary(boundaryPath){
     var polygon3 = new kakao.maps.Polygon({
@@ -100,58 +95,58 @@ function drawBoundary(boundaryPath){
         });
         polygon3.setMap(map);
 }
-
 // 폴리곤 만들기
 function drawPolygon(polygonPaths){
-    for (var i = 0; i < polygonPaths.length; i ++) {
-        var polygon = new kakao.maps.Polygon({
-            path: polygonPaths[i], // 그려질 다각형의 좌표 배열입니다
-            strokeWeight: 1, // 선의 두께입니다
-            strokeColor: '#0101DF', // 선의 색깔입니다
-            strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-            fillColor: '#A2FF99', // 채우기 색깔입니다
-            fillOpacity: 0 // 채우기 불투명도 입니다
-        });
-        polygon.setMap(map);
-    };
+    for (var i = 0; i < polygonPaths.length; i ++) { displayArea(polygonPaths[i]);}
 }
-
-function displayArea(area) {
-
-// 다각형을 생성합니다 
-var polygon = new kakao.maps.Polygon({
-    map: map, // 다각형을 표시할 지도 객체
-    path: area.path,
-    strokeWeight: 2,
-    strokeColor: '#004c80',
-    strokeOpacity: 0.8,
-    fillColor: '#fff',
-    fillOpacity: 0.7 
-});
-//____________________________
-
+//var marker4 = new kakao.maps.Marker();
+function displayArea(polygonPaths) {
+    var stroCol ='#0101DF';
+    var fillCol ='#ffffff';
+    var fillOpa ='0.1';
+    var polygon = new kakao.maps.Polygon({
+        path: polygonPaths.path, // 그려질 다각형의 좌표 배열입니다
+        strokeWeight: 1, // 선의 두께입니다
+        strokeColor: stroCol, // 선의 색깔입니다
+        strokeOpacity: 0.5, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+        fillColor: fillCol, // 채우기 색깔입니다
+        fillOpacity: fillOpa // 채우기 불투명도 입니다
+    });
+   
 
 // 다각형에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
 // 커스텀 오버레이를 지도에서 제거합니다 
-kakao.maps.event.addListener(polygon, 'mouseout', function() {
-    polygon.setOptions({fillColor: '#fff'});
-    customOverlay.setMap(null);
-}); 
 
-// 다각형에 click 이벤트를 등록하고 이벤트가 발생하면 다각형의 이름과 면적을 인포윈도우에 표시합니다 
-kakao.maps.event.addListener(polygon, 'click', function(mouseEvent) {
-    var content = '<div class="info">' + 
-                '   <div class="title">' + area.name + '</div>' +
-                '   <div class="size">총 면적 : 약 ' + Math.floor(polygon.getArea()) + ' m<sup>2</sup></area>' +
-                '</div>';
+    kakao.maps.event.addListener(polygon, 'mouseover', function(mouseEvent) {
+        polygon.setOptions({ fillColor: '#09f', fillOpacity: 0.5, strokeColor: '#09f'});
+    });
+    kakao.maps.event.addListener(polygon, 'click', function(mouseEvent) {
+        polygon.setOptions({ fillColor: '#0101DF', fillOpacity: 1});   
+        /*marker4.setMap(null);
+        marker4 = new kakao.maps.Marker({
+            position: mouseEvent.latLng, text: 'polygonPaths.name'
+        });
+        marker4.setMap(map);
+        */
+        var result2Div = document.getElementById('result3'); 
+        result2Div.innerHTML = polygonPaths.name;
 
-    infowindow.setContent(content); 
-    infowindow.setPosition(mouseEvent.latLng); 
-    infowindow.setMap(map);
 });
-}
 
-//-----------------------------------
+
+kakao.maps.event.addListener(polygon, 'mouseout', function(mouseEvent) {
+    polygon.setOptions({fillColor: fillCol, fillOpacity: fillOpa, strokeColor: stroCol});
+});
+
+
+polygon.setMap(map);
+
+};
+
+
+
+
+
 
 
 
@@ -277,10 +272,9 @@ var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니
 
 // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
 var mapTypeControl = new kakao.maps.MapTypeControl();
-
-// 지도에 컨트롤 추가
 map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
-
+var zoomControl = new kakao.maps.ZoomControl();
+map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 // 클릭 위치표시
 kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
     // 클릭한 위도, 경도 정보를 가져옵니다 
