@@ -124,6 +124,7 @@ function drawPolygon(polygonPaths){
     for (var i = 0; i < polygonPaths.length; i ++) { displayArea(polygonPaths[i]);}
 }
 //var marker4 = new kakao.maps.Marker();
+var pastpolygon = new kakao.maps.Polygon();
 function displayArea(polygonPaths) {
     var stroCol ='#0101DF';
     var fillCol ='#ffffff';
@@ -136,32 +137,18 @@ function displayArea(polygonPaths) {
         fillColor: fillCol, // 채우기 색깔입니다
         fillOpacity: fillOpa // 채우기 불투명도 입니다
     });
-   
-// 폴리곤 클릭시 작동
-polygon.setMap(null);
+   // 폴리곤 클릭시 작동
     kakao.maps.event.addListener(polygon, 'click', function(mouseEvent) {
+        pastpolygon.setOptions({strokeColor: stroCol, strokeOpacity: 0.5, fillColor: fillCol, fillOpacity: fillOpa});    
         polygon.setOptions({ fillColor: '#0101DF', fillOpacity: 0.3});   
-        /*
-        kakao.maps.event.addListener(polygon, 'mouseover', function(mouseEvent) {
-        polygon.setOptions({ fillColor: '#09f', fillOpacity: 0.5, strokeColor: '#09f'});
-    });
-        marker4.setMap(null);
-        marker4 = new kakao.maps.Marker({
-            position: mouseEvent.latLng, text: 'polygonPaths.name'
-        });
-        marker4.setMap(map);
-kakao.maps.event.addListener(polygon, 'mouseout', function(mouseEvent) {
-    polygon.setOptions({fillColor: fillCol, fillOpacity: fillOpa, strokeColor: stroCol});
-});
-
-        */
         var result2Div = document.getElementById('result3'); 
         result2Div.innerHTML = polygonPaths.name;
-
+        pastpolygon=polygon;
     });
-polygon.setMap(map);
-
+    pastpolygon.setMap(map);     
+    polygon.setMap(map);
 };
+
 
 
 
