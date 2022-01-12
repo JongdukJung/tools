@@ -137,32 +137,28 @@ function displayArea(polygonPaths) {
         fillOpacity: fillOpa // 채우기 불투명도 입니다
     });
    
+// 폴리곤 클릭시 작동
 
-// 다각형에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
-// 커스텀 오버레이를 지도에서 제거합니다 
-
-    kakao.maps.event.addListener(polygon, 'mouseover', function(mouseEvent) {
+    kakao.maps.event.addListener(polygon, 'click', function(mouseEvent) {
+        polygon.setOptions({ fillColor: '#0101DF', fillOpacity: 0.3});   
+        /*
+        kakao.maps.event.addListener(polygon, 'mouseover', function(mouseEvent) {
         polygon.setOptions({ fillColor: '#09f', fillOpacity: 0.5, strokeColor: '#09f'});
     });
-    kakao.maps.event.addListener(polygon, 'click', function(mouseEvent) {
-        polygon.setOptions({ fillColor: '#0101DF', fillOpacity: 1});   
-        /*marker4.setMap(null);
+        marker4.setMap(null);
         marker4 = new kakao.maps.Marker({
             position: mouseEvent.latLng, text: 'polygonPaths.name'
         });
         marker4.setMap(map);
-        */
-        var result2Div = document.getElementById('result3'); 
-        result2Div.innerHTML = polygonPaths.name;
-
-});
-
-
 kakao.maps.event.addListener(polygon, 'mouseout', function(mouseEvent) {
     polygon.setOptions({fillColor: fillCol, fillOpacity: fillOpa, strokeColor: stroCol});
 });
 
+        */
+        var result2Div = document.getElementById('result3'); 
+        result2Div.innerHTML = polygonPaths.name;
 
+    });
 polygon.setMap(map);
 
 };
