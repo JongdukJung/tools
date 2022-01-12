@@ -5,30 +5,41 @@
              <style> h3 {color : #008800; font-weight: bold; font-size: 12pt;} </style>
              <style> h4 {color : #FFF000; font-size: 11pt;} </style>
              <style> h5 {color : #FF0000; background-color: rgba(255, 255, 255, 0.5 ); font-size: 10pt;} </style>
-             <style> h6 {color : #140835; line-height: 120%; font-size: 10pt;} </style>
+             <style> h6 {color : #140835; line-height: 120%; font-size: 9pt;} </style>
 
 <html>
 <head>
     <meta charset="utf-8">
     <title>양주시 테스트</title>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3a7857a3bd564cf642a647203f178f40"></script>
-    
+<!-- 카메라 부분 -->
+    <script src="/jquery/jquery.js"></script> 
+    <script> $(document).ready(function(){
+        if (!('url' in window) && ('webkitURL' in window)) { 
+            window.URL = window.webkitURL; 
+        } 
+        $('#camera').change(function(e){ 
+            $('#pic').attr('src', URL.createObjectURL(e.target.files[0]));
+        });
+    }); 
+    </script>
 </head>
 <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width">
 
 <body>
 <div id="map" style="margin: 0px; width:100%; height:80%;"></div>
-<p>
+<h6>
     <button id="traceBtn" onclick="traceClickHandler()">현재위치 추적 시작</button>
     <button onclick="moveCenter()">청주시청</button>
     <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
-    <a id="link">길 찾기</a>
-</p>
-<p clsss = "h6">
-<a id="result2"></a>
-<a id="result"></a><br>
-<a id="result3"></a>
-</p> 
+    <a id="link">길 찾기</a><br>
+<span id="result2"></span>
+<span id="result"></span>
+</h6>
+<h5>
+<div id="result3"></div>
+<input type="file" id="camera" name="camera" capture="camera" accept="image/*" title='사진 찍기'/>
+</h5> 
 <script>
 //==============================================================================================
 //FUNCTION
