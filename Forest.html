@@ -33,6 +33,29 @@
 //==============================================================================================
 
 // HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
+var options = {
+  enableHighAccuracy: true,
+  timeout: 5000,
+  maximumAge: 0
+};
+function success(position) {
+    var lat = position.coords.latitude, // 위도
+            lon = position.coords.longitude; // 경도
+        var locPosition = new kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+        displayMarker(locPosition);
+}
+function error(err) {
+    alert('현재 위치를 알 수 없습니다');
+	var locPosition = mapCenter; // 지도의 중심 좌표(청주시청)
+        displayMarker(locPosition);
+}
+function displayMarker2() {
+id = navigator.geolocation.watchPosition(success, error, options);
+}
+
+//navigator.geolocation.clearWatch(id);
+
+/*
 function displayMarker2() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -48,6 +71,7 @@ function displayMarker2() {
         displayMarker(locPosition);
     }
 }
+*/
 
 // 마커 표시하고 센터 이동하기
 var marker2= new kakao.maps.Marker();
