@@ -35,14 +35,16 @@
     <a id="link">길 찾기</a><br>
 <span id="result2"></span>
 <span id="result"></span>
-</h6>
-<h5>
 <div id="result3"></div>
 <input type="file" id="camera" name="camera" capture="camera" accept="image/*" title='사진 찍기'/>
 <img id="pic" style="width:100%;" />
-수종1 : <input type="text" name="tree1" list="treeList">
-수종2 : <input type="text" name="tree2" list="treeList">
-<button type="submit">저장하기</button><br>
+수종1 : <input type="text" name="tree1" list="treeList" size = 10>
+    <select name="ratio1"><option value="100">100</option><option value="90">90</option><option value="80">80</option><option value="70">70</option><option value="60">60</option><option value="50">50</option><option value="40">40</option></select>%<br>
+수종2 : <input type="text" name="tree2" list="treeList" size = 10>
+<select name="ratio2"><option value="50">50</option><option value="40">40</option><option value="30">30</option><option value="20">20</option><option value="10">10</option></select>%<br>
+수종3 : <input type="text" name="tree3" list="treeList" size = 10>
+<select name="ratio3"><option value="30">30</option><option value="20">20</option><option value="10">10</option></select>%<br>
+<button type="submit">저장</button><br>
 <datalist id="treeList">
     <option value="굴참나무"></option>
     <option value="상수리나무"></option>
@@ -50,7 +52,7 @@
     <option value="떡갈나무"></option>
     <option value="아까시나무"></option>
 </datalist>
-</h5>
+</h6>
 
 
 <script>
