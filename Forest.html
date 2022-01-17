@@ -190,7 +190,10 @@ function displayArea(polygonPaths) {
     kakao.maps.event.addListener(polygon, 'click', function(mouseEvent) {
         pastpolygon.setOptions({strokeColor: stroCol, strokeOpacity: 0.5, fillColor: fillCol, fillOpacity: fillOpa});    
         polygon.setOptions({ fillColor: '#0101DF', fillOpacity: 0.3});   
-        var result2Div = document.getElementById('result3'); 
+        var result2Div = document.getElementById('result3');
+//폴리곤 번호 보내서 정보 받아오기
+
+        //활성화된 폴리곤 지우기위해 저장
         result2Div.innerHTML = polygonPaths.name;
         pastpolygon=polygon;
     });
