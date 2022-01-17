@@ -11,7 +11,7 @@ url=url+"?q="+str;
 //url=url+"&sid="+Math.random();
 xmlhttp.onreadystatechange=stateChanged;
 xmlhttp.open("GET",url,true);
-xmlhttp.send();
+xmlhttp.send(null);
 }
 
 function stateChanged()
