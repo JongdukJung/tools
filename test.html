@@ -1,0 +1,123 @@
+<? include_once "$DOCUMENT_ROOT/glib/inc_utf8.php"; ?>
+<!doctype html>
+<html lang="kr">
+  <head>
+    <meta charset="utf-8">
+    <title>수집 시료 목록</title>
+    <style>
+		header {padding: 10px; font-size: 20px; background: #F2F2F2;}
+		article {padding: 10px; font-size: 14px;} 
+      
+      table {
+        width: 100%;
+      }
+      th, td {
+        padding: 3px;
+        border-bottom: 1px solid #dadada;
+      }
+    </style>
+  </head>
+  <body>
+  <header><b>수집 시료 목록</b>&nbsp; &nbsp; <a href="http://koreanplant.info/collection/sp_list.html"> 수집 대상 목록으로 가기 </a> &nbsp; &nbsp; <a href="http://koreanplant.info/collection/stat.html"> 시료 확보 통계로 가기 </a></header>
+    <article>
+	<br>
+	<form method="get" action="">
+	사업명 <input type ="text" name="sch_word1"> 국명 <input type ="text" name="sch_word2"> 채집자 <input type ="text" name="sch_word3"> 
+	종류 <select name="sch_word4">
+		<option value="">전체</option>
+		<option value="천연물">천연물</option>
+		<option value="종자">종자</option>
+		<option value="표본">표본</option>
+		</select>
+	<input type ="submit" value="검색">
+	<input type ="hidden" name="start" value="0">
+	</form><br>
+	<table>
+      <thead>
+        <tr>
+          <th>ID</th>
+		  <th>사업명</th>
+          <th>종류</th>
+          <th>국명</th>
+          <th>채집번호</th>
+		  <th>채집자</th>
+		  <th>채집일</th>
+		  <th>채집장소</th>
+		  <th>수량</th>
+		  <th>비고</th>
+		  <th>등록일</th>
+		  <th>수정</th>
+		  <th>삭제</th>
+		</tr>
+      </thead>
+	  <tbody>
+ 
+        <?php
+		
+				$rec_num = 50;
+		if(empty($_GET['start'])){
+			$page_n = 0;
+		}
+		else{
+			$page_n = $_GET['start']*$rec_num;
+		}
+				
+		$conn = mysqli_connect( $db_host, $db_user, $db_pass, $db_name )  or die("DB 접속에 실패했습니다.");
+        $sch_word_d1=$_GET["sch_word1"];
+		$sch_word_d2=$_GET["sch_word2"];
+		$sch_word_d3=$_GET["sch_word3"];
+		$sch_word_d4=$_GET["sch_word4"];
+		@mysql_query("set names 'utf8'");
+		
+		// 전체 질의	
+		$query1 = "SELECT * FROM RTB_coll_list where proj like '%$sch_word_d1%' and sp_k like '%$sch_word_d2%' and collector like '%$sch_word_d3%' and kind like '%$sch_word_d4%' and RegOrDel ='y' order by sp_k, kind;";
+		$query1= iconv('utf8', 'euckr', $query1);
+        $result1 = mysqli_query( $conn, $query1 );
+		echo '<b>'.$cnt = mysqli_num_rows($result1). '</b>건이 검색되었습니다.<br><br>';
+		// 일부 질의	
+		$query1 = "SELECT * FROM RTB_coll_list where proj like '%$sch_word_d1%' and sp_k like '%$sch_word_d2%' and collector like '%$sch_word_d3%' and kind like '%$sch_word_d4%' and RegOrDel ='y' order by sp_k, kind limit $page_n, $rec_num;";
+		$query1= iconv('utf8', 'euckr', $query1);
+        $result1 = mysqli_query( $conn, $query1 );
+		 while( $row1 = mysqli_fetch_array( $result1 ) ) {
+			  $id=$row1[ 'id' ];
+			  echo '<tr>
+			  <td style="text-align:center;">'.$row1[ 'id' ].'</td>
+			  <td style="text-align:center;">'.$proj= iconv('euckr', 'utf8', $row1["proj"]) . '</td>
+			  <td style="text-align:center;">'.$kind= iconv('euckr', 'utf8', $row1["kind"]) . '</td>
+			  <td style="text-align:center;">'.$sp_k= iconv('euckr', 'utf8', $row1[ 'sp_k' ]) . '</td>
+			  <td style="text-align:center;">'.$coll_no= iconv('euckr', 'utf8',$row1[ 'coll_no' ]) . '</td>
+			  <td style="text-align:center;">'.$collector= iconv('euckr', 'utf8',$row1[ 'collector' ]) . '</td>
+			  <td style="text-align:center;">'.$date= iconv('euckr', 'utf8',$row1[ 'date' ]) . '</td>
+			  <td style="text-align:center;">'.$loc= iconv('euckr', 'utf8',$row1[ 'loc' ]) . '</td>
+			  <td style="text-align:center;">'.$amount=iconv('euckr', 'utf8',$row1[ 'amount' ]). '</td>
+			  <td>'.$note= iconv('euckr', 'utf8',$row1[ 'note' ]) . '</td>
+			  <td style="text-align:center;">'.$row1[ 'reg_time' ]. '</td>
+			  
+			  <td style="text-align:center;"><form action="edit.html" method="post">
+				<input type="hidden" name="id" value="'.$id.'">
+				<input type ="submit" value="수정">
+				</form></td>
+			  
+			  <td style="text-align:center;"><form action="delete.html" method="post">
+				<input type="hidden" name="id" value="'.$id.'">
+				<input type ="submit" value="삭제">
+				</form></td>
+			  </tr>';
+         }
+?>
+      </tbody>
+    </table>		
+		<?php
+		//페이지 링크
+		 $page_cnt = $cnt/$rec_num;
+		 if($page_cnt>1){
+			for($i=0;$i<$page_cnt;$i++){
+			$j=$i+1;
+			echo " <a href=$_SERVER[PHP_SELF]?start=$i&sch_word1=$sch_word1&sch_word2=$sch_word2&sch_word3=$sch_word3&sch_word4=$sch_word4>[$j] </a>";}
+		}
+			
+		 mysql_close();
+		?>
+  </article>
+  </body>
+</html>
