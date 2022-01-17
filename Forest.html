@@ -27,25 +27,25 @@
 <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width">
 
 <body>
-<div id="map" style="margin: 0px; width:100%; height:70%;"></div>
+<div id="map" style="margin: 0px; width:100%; height:70%; line-height: 120%;"></div>
 <h6>
     <button id="traceBtn" onclick="traceClickHandler()">현재위치 추적 시작</button>
-    <button onclick="moveCenter()">청주시청</button>
-    <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
+    <button onclick="moveCenter()">중심 위치</button>
+    <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기(미정)</button>
     <a id="link">길 찾기</a><br>
 <span id="result2"></span>
 <span id="result"></span>
 <div id="result3"></div>
 <input type="file" id="camera" name="camera" capture="camera" accept="image/*" title='사진 찍기'/>
 <img id="pic" style="width:100%;" />
-수종1 : <input type="text" name="tree1" list="treeList" size = 10>
-    <select name="ratio1"><option value="100">100</option><option value="90">90</option><option value="80">80</option><option value="70">70</option><option value="60">60</option><option value="50">50</option><option value="40">40</option></select>%<br>
-수종2 : <input type="text" name="tree2" list="treeList" size = 10>
+수종1 : <input type="text" name="tree1" list="treeList" size = 7>
+    <select name="ratio1"><option value="100">100</option><option value="90">90</option><option value="80">80</option><option value="70">70</option><option value="60">60</option><option value="50">50</option><option value="40">40</option></select>% 
+수종2 : <input type="text" name="tree2" list="treeList" size = 7>
 <select name="ratio2"><option value="50">50</option><option value="40">40</option><option value="30">30</option><option value="20">20</option><option value="10">10</option></select>%<br>
-수종3 : <input type="text" name="tree3" list="treeList" size = 10>
-<select name="ratio3"><option value="30">30</option><option value="20">20</option><option value="10">10</option></select>%<br>
+수종3 : <input type="text" name="tree3" list="treeList" size = 7>
+<select name="ratio3"><option value="30">30</option><option value="20">20</option><option value="10">10</option></select>% 
 <button type="submit">저장</button><br>
-<datalist id="treeList">
+<datalist id="treeList" line-height=120% font-size=9pt height=10>
     <option value="굴참나무"></option>
     <option value="상수리나무"></option>
     <option value="신갈나무"></option>
@@ -72,10 +72,10 @@
     <option value="떡갈나무"></option>
     <option value="아까시나무"></option>
 </datalist>
+<input type ="hidden" name="id" value="1">
 </h6>
-
-
 <script>
+   
 //==============================================================================================
 //FUNCTION
 //==============================================================================================
