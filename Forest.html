@@ -34,15 +34,13 @@
     <button onclick="moveCenter()">중심 위치</button>
     <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
     <a id="link">길 찾기</a><br>
-<span id="result2"></span>
-<span id="result"></span>
-<div id="result3"></div>
-<span id="position_lat"></span>
-<span id="position_long"></span>
-<span id="now"></span>
-<button id="polygonNameBtn" onclick="location.href='http://koreanplant.info/forest/record.html'">기록/수정</button>
+클릭 지점 : <span id="result2"></span><span id="result"></span><br>
+선택 폴리곤 : <span id="result3"></span><br>
+관측 지점 : <span id="position_lat"></span> <span id="position_long"></span><br>
+관측 일시 : <span id="now"></span><br>
+<button id="polygonNameBtn" onclick="location.href='http://koreanplant.info/forest/record1.php'">기록/수정</button>
 <form action="http://koreanplant.info/forest/record.html" method="post">
-    <input type="hidden" name="id" value="result3">
+    <input type="hidden" name="id" value='1'>
     <input type="hidden" name="position_lat" value="position_lat">
     <input type="hidden" name="position_long" value="position_long">
     <input type="hidden" name="recDate" value="now">
@@ -164,19 +162,19 @@ function displayArea(polygonPaths) {
         result2Div.innerHTML = polygonPaths.name;
         //기록 시간 받기
         var time= new Date(); //시간받기위해서 new date
-        document.getElementById("now").innerHTML=time.getHours()+"시"+time.getMinutes()+"분"+time.getSeconds()+"초";
+        document.getElementById("now").innerHTML=time.getFullYear()+"-"+time.getMonth()+"-"+time.getDay()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
         //관측지점 받기
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
-                var lat = position.coords.latitude,
-                    lon = position.coords.longitude;
+                var lat2 = position.coords.latitude,
+                    lon2 = position.coords.longitude;
             });
         }
         else {alert('현재 위치를 알 수 없습니다');
-            lat = '0', lon = '0';
+            lat2 = '0', lon2 = '0';
         }
-        document.getElementById("position_lat").innerHTML=lat;
-        document.getElementById("position_long").innerHTML=lon;
+        document.getElementById("position_lat").innerHTML=lat2;
+        document.getElementById("position_long").innerHTML=lon2;
 
         //활성화된 폴리곤 지우기위해 저장
         pastpolygon=polygon;
