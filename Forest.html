@@ -35,16 +35,17 @@
     <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
     <a id="link">길 찾기</a><br>
 클릭 지점 : <span id="result2"></span><span id="result"></span><br>
-선택 폴리곤 : <span id="result3"></span><br>
+선택 폴리곤 : <span id="polID"></span><br>
 관측 지점 : <span id="position_lat"></span> <span id="position_long"></span><br>
-관측 일시 : <span id="now"></span><br>
-<button id="polygonNameBtn" onclick="location.href='http://koreanplant.info/forest/record1.php'">기록/수정</button>
-<form action="http://koreanplant.info/forest/record.html" method="post">
-    <input type="hidden" name="id" value='1'>
-    <input type="hidden" name="position_lat" value="position_lat">
-    <input type="hidden" name="position_long" value="position_long">
-    <input type="hidden" name="recDate" value="now">
-    </form>
+관측 일시 : <span id="recDate"></span><br>
+
+    <form name="formA" action="http://koreanplant.info/forest/record1.php" method="post">
+    <input type="hidden" name="polID" value=""/>
+    <input type="hidden" name="position_lat" value=""/>
+    <input type="hidden" name="position_long" value=""/>
+    <input type="hidden" name="recDate" value=""/>
+    <input type ="submit" value="기록/수정">    
+</form>
 
 </h6>
 <script>
@@ -158,11 +159,13 @@ function displayArea(polygonPaths) {
     kakao.maps.event.addListener(polygon, 'click', function(mouseEvent) {
         pastpolygon.setOptions({strokeColor: stroCol, strokeOpacity: 0.5, fillColor: fillCol, fillOpacity: fillOpa});    
         polygon.setOptions({ fillColor: '#0101DF', fillOpacity: 0.3});   
-        var result2Div = document.getElementById('result3');
+        var result2Div = document.getElementById('polID');
         result2Div.innerHTML = polygonPaths.name;
+        document.formA.polID.value = polygonPaths.name;
         //기록 시간 받기
         var time= new Date(); //시간받기위해서 new date
-        document.getElementById("now").innerHTML=time.getFullYear()+"-"+time.getMonth()+"-"+time.getDay()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+        document.getElementById("recDate").innerHTML=time.getFullYear()+"-"+time.getMonth()+"-"+time.getDay()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+        document.formA.recDate.value = time.getFullYear()+"-"+time.getMonth()+"-"+time.getDay()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
         //관측지점 받기
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -175,7 +178,8 @@ function displayArea(polygonPaths) {
         }
         document.getElementById("position_lat").innerHTML=lat2;
         document.getElementById("position_long").innerHTML=lon2;
-
+        document.formA.position_lat.value = lat2;
+        document.formA.position_long.value = lon2;
         //활성화된 폴리곤 지우기위해 저장
         pastpolygon=polygon;
     });
