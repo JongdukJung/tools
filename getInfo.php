@@ -1,4 +1,4 @@
-<? include_once "$DOCUMENT_ROOT/glib/inc_utf8.php"; ?>
+<? include_once "http://koreanplant.info/glib/inc_utf8.php"; ?>
 <?php
 $q=$_GET["q"];
 
