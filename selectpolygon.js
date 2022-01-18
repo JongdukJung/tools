@@ -1,5 +1,5 @@
 function showInfo(str){
-var url="http://koreanplant.info/forest/getInfo.php";
+var url="https://jongdukjung.github.io/tools/getInfo.php";
 url=url+"?q="+str;
 var xmlhttp = new XMLHttpRequest();
 xmlhttp.open("POST", url, true);
