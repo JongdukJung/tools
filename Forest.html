@@ -167,15 +167,20 @@ function displayArea(polygonPaths) {
         document.getElementById("recDate").innerHTML=time.getFullYear()+"-"+time.getMonth()+"-"+time.getDay()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
         document.formA.recDate.value = time.getFullYear()+"-"+time.getMonth()+"-"+time.getDay()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
         //관측지점 받기
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var lat2 = position.coords.latitude,
+        function success2(position) {
+          doSomething(position.coords.latitude, position.coords.longitude);
+          var lat2 = position.coords.latitude,
                     lon2 = position.coords.longitude;
-            });
         }
-        else {alert('현재 위치를 알 수 없습니다');
+        function error2() {
+            alert('현재 위치를 알 수 없습니다');
             lat2 = '0', lon2 = '0';
         }
+        const options2 = {
+            enableHighAccuracy: true,
+            maximumAge: 30000,
+            timeout: 10000
+        };
         document.getElementById("position_lat").innerHTML=lat2;
         document.getElementById("position_long").innerHTML=lon2;
         document.formA.position_lat.value = lat2;
