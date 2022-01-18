@@ -5,7 +5,7 @@
              <style> h3 {color : #008800; font-weight: bold; font-size: 12pt;} </style>
              <style> h4 {color : #FFF000; font-size: 11pt;} </style>
              <style> h5 {color : #FF0000; background-color: rgba(255, 255, 255, 0.5 ); font-size: 10pt;} </style>
-             <style> h6 {color : #140835; line-height: 120%; font-size: 9pt;} </style>
+             <style> h6 {color : #140835; line-height: 140%; font-size: 9pt;} </style>
 
 <html>
 <head>
@@ -39,7 +39,7 @@
 관측 지점 : <span id="position_lat"></span> <span id="position_long"></span><br>
 관측 일시 : <span id="recDate"></span><br>
 
-    <form name="formA" action="http://koreanplant.info/forest/record1.php" method="post">
+    <form name="formA" action="http://koreanplant.info/forest/record.html" method="post">
     <input type="hidden" name="polID" value=""/>
     <input type="hidden" name="position_lat" value=""/>
     <input type="hidden" name="position_long" value=""/>
@@ -157,8 +157,11 @@ function displayArea(polygonPaths) {
     });
    // 폴리곤 클릭시 작동
     kakao.maps.event.addListener(polygon, 'click', function(mouseEvent) {
-        pastpolygon.setOptions({strokeColor: stroCol, strokeOpacity: 0.5, fillColor: fillCol, fillOpacity: fillOpa});    
+        //이전 폴리곤 지우기
+        pastpolygon.setOptions({strokeColor: stroCol, strokeOpacity: 0.5, fillColor: fillCol, fillOpacity: fillOpa});  
+        //선택 폴리곤 색칠
         polygon.setOptions({ fillColor: '#0101DF', fillOpacity: 0.3});   
+        
         var result2Div = document.getElementById('polID');
         result2Div.innerHTML = polygonPaths.name;
         document.formA.polID.value = polygonPaths.name;
@@ -168,23 +171,20 @@ function displayArea(polygonPaths) {
         document.formA.recDate.value = time.getFullYear()+"-"+time.getMonth()+"-"+time.getDay()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
         //관측지점 받기
         function success2(position) {
-          doSomething(position.coords.latitude, position.coords.longitude);
-          var lat2 = position.coords.latitude,
-                    lon2 = position.coords.longitude;
+          document.getElementById("position_lat").innerHTML=position.coords.latitude;
+          document.getElementById("position_long").innerHTML=position.coords.longitude;
+          document.formA.position_lat.value = position.coords.latitude;
+          document.formA.position_long.value = position.coords.longitude;
         }
         function error2() {
             alert('현재 위치를 알 수 없습니다');
-            lat2 = '0', lon2 = '0';
         }
         const options2 = {
             enableHighAccuracy: true,
             maximumAge: 30000,
             timeout: 10000
         };
-        document.getElementById("position_lat").innerHTML=lat2;
-        document.getElementById("position_long").innerHTML=lon2;
-        document.formA.position_lat.value = lat2;
-        document.formA.position_long.value = lon2;
+        navigator.geolocation.getCurrentPosition(success2, error2, options2)
         //활성화된 폴리곤 지우기위해 저장
         pastpolygon=polygon;
     });
