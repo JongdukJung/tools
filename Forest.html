@@ -32,50 +32,20 @@
 <h6>
     <button id="traceBtn" onclick="traceClickHandler()">현재위치 추적 시작</button>
     <button onclick="moveCenter()">중심 위치</button>
-    <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기(미정)</button>
+    <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
     <a id="link">길 찾기</a><br>
 <span id="result2"></span>
 <span id="result"></span>
 <div id="result3"></div>
-<input type="file" id="camera" name="camera" capture="camera" accept="image/*" title='사진 찍기'/>
-<img id="pic" style="width:100%;" />
-수종1 : <input type="text" name="tree1" list="treeList" size = 7>
-    <select name="ratio1"><option value="100">100</option><option value="90">90</option><option value="80">80</option><option value="70">70</option><option value="60">60</option><option value="50">50</option><option value="40">40</option></select>% 
-수종2 : <input type="text" name="tree2" list="treeList" size = 7>
-<select name="ratio2"><option value="50">50</option><option value="40">40</option><option value="30">30</option><option value="20">20</option><option value="10">10</option></select>%<br>
-수종3 : <input type="text" name="tree3" list="treeList" size = 7>
-<select name="ratio3"><option value="30">30</option><option value="20">20</option><option value="10">10</option></select>% 
-<button type="submit">저장</button><br>
-<datalist id="treeList" line-height=120% font-size=9pt height=10>
-    <option value="굴참나무"></option>
-    <option value="상수리나무"></option>
-    <option value="신갈나무"></option>
-    <option value="떡갈나무"></option>
-    <option value="아까시나무"></option>
-    <option value="굴참나무"></option>
-    <option value="상수리나무"></option>
-    <option value="신갈나무"></option>
-    <option value="떡갈나무"></option>
-    <option value="아까시나무"></option>
-    <option value="굴참나무"></option>
-    <option value="상수리나무"></option>
-    <option value="신갈나무"></option>
-    <option value="떡갈나무"></option>
-    <option value="아까시나무"></option>
-    <option value="굴참나무"></option>
-    <option value="상수리나무"></option>
-    <option value="신갈나무"></option>
-    <option value="떡갈나무"></option>
-    <option value="아까시나무"></option>
-    <option value="굴참나무"></option>
-    <option value="상수리나무"></option>
-    <option value="신갈나무"></option>
-    <option value="떡갈나무"></option>
-    <option value="아까시나무"></option>
-</datalist>
-
+<span id="position_lat"></span>
+<span id="position_long"></span>
+<span id="now"></span>
+<button id="polygonNameBtn" onclick="location.href='http://koreanplant.info/forest/record.html'">기록/수정</button>
 <form action="http://koreanplant.info/forest/record.html" method="post">
     <input type="hidden" name="id" value="result3">
+    <input type="hidden" name="position_lat" value="position_lat">
+    <input type="hidden" name="position_long" value="position_long">
+    <input type="hidden" name="recDate" value="now">
     </form>
 
 </h6>
@@ -139,7 +109,7 @@ function displayMarker(locPosition) {
     map.setCenter(locPosition);      
 }
 
-// 센터이동없이 마커 표시하기
+// 클릭지점 마커 표시하기
 var marker3= new kakao.maps.Marker();
 function displayMarker3(locPosition) {
     marker3.setMap(null);
@@ -191,10 +161,24 @@ function displayArea(polygonPaths) {
         pastpolygon.setOptions({strokeColor: stroCol, strokeOpacity: 0.5, fillColor: fillCol, fillOpacity: fillOpa});    
         polygon.setOptions({ fillColor: '#0101DF', fillOpacity: 0.3});   
         var result2Div = document.getElementById('result3');
-//폴리곤 번호 보내서 정보 받아오기
+        result2Div.innerHTML = polygonPaths.name;
+        //기록 시간 받기
+        var time= new Date(); //시간받기위해서 new date
+        document.getElementById("now").innerHTML=time.getHours()+"시"+time.getMinutes()+"분"+time.getSeconds()+"초";
+        //관측지점 받기
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude,
+                    lon = position.coords.longitude;
+            });
+        }
+        else {alert('현재 위치를 알 수 없습니다');
+            lat = '0', lon = '0';
+        }
+        document.getElementById("position_lat").innerHTML=lat;
+        document.getElementById("position_long").innerHTML=lon;
 
         //활성화된 폴리곤 지우기위해 저장
-        result2Div.innerHTML = polygonPaths.name;
         pastpolygon=polygon;
     });
     pastpolygon.setMap(map);     
