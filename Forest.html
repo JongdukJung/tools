@@ -29,7 +29,7 @@
 관측 일시 : <span id="recDate"></span><br>
 
 <form name="formA" method="post" action="">
-    <input type="button" value="기록/수정" onclick="new_caputre()"/>
+    <input type="button" value="기록/수정" onclick="new_window()"/>
     <input type="hidden" name="polID" value=""/>
     <input type="hidden" name="position_lat" value=""/>
     <input type="hidden" name="position_long" value=""/>
@@ -40,7 +40,8 @@
 //==============================================================================================
 //FUNCTION
 //==============================================================================================
-function new_caputre(){
+//기록창 띄우기
+function new_window(){
     if(document.formA.polID.value==''){
        alert('먼저 폴리곤을 선택해 주세요');}
     else{
