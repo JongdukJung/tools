@@ -1,5 +1,5 @@
 [
-[new kakao.maps.LarLag(37.8248374, 126.9019544),
+new kakao.maps.LarLag(37.8248374, 126.9019544),
 new kakao.maps.LarLag(37.8251244, 126.9020417),
 new kakao.maps.LarLag(37.8251697, 126.9020513),
 new kakao.maps.LarLag(37.8254096, 126.9021015),
@@ -2910,5 +2910,5 @@ new kakao.maps.LarLag(37.8230668, 126.9033931),
 new kakao.maps.LarLag(37.8236924, 126.9029649),
 new kakao.maps.LarLag(37.8239712, 126.902693),
 new kakao.maps.LarLag(37.8243957, 126.9022791),
-new kakao.maps.LarLag(37.8248374, 126.9019544)]
+new kakao.maps.LarLag(37.8248374, 126.9019544)
 ]
