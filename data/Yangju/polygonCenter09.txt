@@ -2457,5 +2457,6 @@
 {title: '<BB>F50479</BB>', latlng: new kakao.maps.LatLng(37.8162907, 126.9769109)},
 {title: '<AA>F50480</AA>', latlng: new kakao.maps.LatLng(37.817951, 126.9769342)},
 {title: '<BB>F50481</BB>', latlng: new kakao.maps.LatLng(37.8178053, 126.9773676)},
+{title: '<BB>F27971-6</BB>', latlng: new kakao.maps.LatLng(37.803258, 127.10211)},
 {title: '<AA>F50482</AA>', latlng: new kakao.maps.LatLng(37.8180857, 126.9774015)}
 ];
