@@ -304,7 +304,7 @@ function displayArea(polygonPaths) {
 // 지도에 표시할 격자를 생성합니다
 function drawPolygon2(polygonPaths){
     for (var i = 0; i < polygonPaths.length; i ++) {
-        var polygon = new kakao.maps.Polygon({
+        var polygon2 = new kakao.maps.Polygon({
             path: polygonPaths[i], // 그려질 다각형의 좌표 배열입니다
             strokeWeight: 1, // 선의 두께입니다
             strokeColor: '#FF0000', // 선의 색깔입니다
@@ -312,18 +312,18 @@ function drawPolygon2(polygonPaths){
             fillColor: '#A2FF99', // 채우기 색깔입니다
             fillOpacity: 0 // 채우기 불투명도 입니다
         });
-        polygon.setMap(map);
+        polygon2.setMap(map);
     };
 }
 
 //지도에 텍스트 표시하기-격자 이름
 function drawText(coordList){
     for (var i = 0; i < coordList.length; i ++) {
-        var customOverlay = new kakao.maps.CustomOverlay({
+        var recText = new kakao.maps.CustomOverlay({
             position: coordList[i].latlng,
             content: coordList[i].title
         });
-        customOverlay.setMap(map);
+        recText.setMap(map);
     };
 }
 
@@ -440,9 +440,10 @@ kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
 });
 
 // 도시 경계 표시하기
+/*
 var boundary = new XMLHttpRequest();
 boundary.open('GET', boundaryFile, true);
-boundary.overrideMimeType('text/plain; charset=utf-8');
+//boundary.overrideMimeType('text/plain; charset=utf-8');
 boundary.onload = function() {
     if (boundary.status == 200) {
         var boundaryPath = eval(boundary.responseText);
@@ -462,11 +463,11 @@ rectangle.onload = function() {
     };
 };
 rectangle.send(null);
-
+*/
 //격자 번호 표시하기
 var pointText1 = new XMLHttpRequest();
 pointText1.open('GET', rectangleCenterFile, true);
-pointText1.overrideMimeType('text/plain; charset=utf-8');
+//pointText1.overrideMimeType('text/plain; charset=utf-8');
 pointText1.onload = function() {
     if (pointText1.status == 200) {
         var coordList1 = eval(pointText1.responseText);
