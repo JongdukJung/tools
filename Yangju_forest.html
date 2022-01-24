@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <style type="text/css"> html, body { margin: 0px; height:100%;}  </style>
-             <style> h1 {color : #0101DF; font-weight: bold; font-size: 12pt;} </style>
+             <style> h1 {color : #ffa600; font-weight: bold; font-size: 12pt;} </style>
              <style> h2 {color : #df9101; font-weight: bold; font-size: 12pt;} </style>
              <style> h3 {color : #008800; font-weight: bold; font-size: 12pt;} </style>
              <style> h4 {color : #FFF000; font-size: 11pt;} </style>
@@ -50,7 +50,7 @@ var yellowDot = 'https://jongdukjung.github.io/jongdukjung/biotope/yellow.png';
 //도시경계 및 격자 설정
 var boundaryFile = './data/Yangju/boundary.txt';
 var rectangleFile = './data/Yangju/rectangle.txt';
-var rectangleCenterFile = './data/Yangju/rectangle.txt';
+var rectangleCenterFile = './data/Yangju/rectangleCenter.txt';
 
 // 조사구역이 여러개로 나뉜 경우 환경 설정
 // 구역 id 받기
@@ -255,7 +255,7 @@ var pastpolygon = new kakao.maps.Polygon();
 function displayArea(polygonPaths) {
     var stroCol ='#0101DF';
     var fillCol ='#ffffff';
-    var fillOpa ='0.1';
+    var fillOpa ='0.01';
     var polygon = new kakao.maps.Polygon({
         path: polygonPaths.path, // 그려질 다각형의 좌표 배열입니다
         strokeWeight: 1, // 선의 두께입니다
@@ -302,17 +302,17 @@ function displayArea(polygonPaths) {
     polygon.setMap(map);
 };
 // 지도에 표시할 격자를 생성합니다
-function drawPolygon2(polygonPaths){
-    for (var i = 0; i < polygonPaths.length; i ++) {
-        var polygon2 = new kakao.maps.Polygon({
-            path: polygonPaths[i], // 그려질 다각형의 좌표 배열입니다
-            strokeWeight: 1, // 선의 두께입니다
-            strokeColor: '#FF0000', // 선의 색깔입니다
+function drawRectangle(rectanglePath){
+    for (var i = 0; i < rectanglePath.length; i ++) {
+        var rectangleLayer = new kakao.maps.Polygon({
+            path: rectanglePath[i].path, // 그려질 다각형의 좌표 배열입니다
+            strokeWeight: 0.5, // 선의 두께입니다
+            strokeColor: '#ffa600', // 선의 색깔입니다
             strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
             fillColor: '#A2FF99', // 채우기 색깔입니다
             fillOpacity: 0 // 채우기 불투명도 입니다
         });
-        polygon2.setMap(map);
+        rectangleLayer.setMap(map);
     };
 }
 
@@ -350,7 +350,6 @@ function polygonNameClickHandler(){
 // 폴리곤 이름 좌표 불러오기
 var pointText3 = new XMLHttpRequest();
 pointText3.open('GET', polygonCenterFile, true);
-//pointText3.open('GET', '/tools/data/chungju2_polygon_center.txt', true);
 pointText3.overrideMimeType('text/plain; charset=utf-8');
 pointText3.onload = function() {
     if (pointText3.status == 200) {
@@ -440,10 +439,10 @@ kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
 });
 
 // 도시 경계 표시하기
-/*
+
 var boundary = new XMLHttpRequest();
 boundary.open('GET', boundaryFile, true);
-//boundary.overrideMimeType('text/plain; charset=utf-8');
+boundary.overrideMimeType('text/plain; charset=utf-8');
 boundary.onload = function() {
     if (boundary.status == 200) {
         var boundaryPath = eval(boundary.responseText);
@@ -459,15 +458,15 @@ rectangle.overrideMimeType('text/plain; charset=utf-8');
 rectangle.onload = function() {
     if (rectangle.status == 200) {
         var rectanglePath = eval(rectangle.responseText);
-        drawPolygon2(rectanglePath);
+        drawRectangle(rectanglePath);
     };
 };
 rectangle.send(null);
-*/
+
 //격자 번호 표시하기
 var pointText1 = new XMLHttpRequest();
 pointText1.open('GET', rectangleCenterFile, true);
-//pointText1.overrideMimeType('text/plain; charset=utf-8');
+pointText1.overrideMimeType('text/plain; charset=utf-8');
 pointText1.onload = function() {
     if (pointText1.status == 200) {
         var coordList1 = eval(pointText1.responseText);
