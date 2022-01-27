@@ -45,8 +45,7 @@
 //==============================================================================================
 // 마커경로
 var redDot = 'https://jongdukjung.github.io/jongdukjung/biotope/target.png';
-var blueDot = 'https://jongdukjung.github.io/jongdukjung/biotope/current.png';
-var yellowDot = 'https://jongdukjung.github.io/jongdukjung/biotope/yellow.png';
+var currentArrow = 'https://jongdukjung.github.io/jongdukjung/biotope/current.png';
 
 //도시경계 및 격자 설정
 var boundaryFile = './data/Yangju/boundary.txt';
@@ -227,7 +226,7 @@ function traceStop() {
 var marker1= new kakao.maps.Marker();
 function displayMarker(locPosition) {
     marker1.setMap(null);
-    var imageSrc = blueDot; // 마커이미지의 주소입니다   
+    var imageSrc = currentArrow; // 마커이미지의 주소입니다   
     var imageSize = new kakao.maps.Size(12, 12); 
     var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
 	marker1 = new kakao.maps.Marker({  
@@ -247,21 +246,23 @@ function movePosition(){
         //var altitude = position.coords.latitude;
         locPosition = new kakao.maps.LatLng(lat, lon);
         console.log(heading);
-        displayMarker2(locPosition);
+        displayMarker(locPosition);
+        map.setCenter(locPosition);
     }
     function error2() {
         alert('현재 위치를 알 수 없습니다');
     }
     var options2 = {
         enableHighAccuracy: true,
-        maximumAge: 30000,
-        timeout: 10000
+        maximumAge: 3000,
+        timeout: 1000
     };
 }
+/*
 var marker2= new kakao.maps.Marker();
 function displayMarker2(locPosition) {
     marker2.setMap(null);
-    var imageSrc = yellowDot; // 마커이미지의 주소입니다   
+    var imageSrc = currentArrow; // 마커이미지의 주소입니다   
     var imageSize = new kakao.maps.Size(12, 12); 
     var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
 	marker2 = new kakao.maps.Marker({  
@@ -272,7 +273,7 @@ function displayMarker2(locPosition) {
 	marker2.setMap(map);
     map.setCenter(locPosition);      
 }
-
+*/
 // 클릭지점 마커 표시하기
 var marker3= new kakao.maps.Marker();
 function displayMarker3(locPosition) {
