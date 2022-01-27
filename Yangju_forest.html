@@ -211,7 +211,7 @@ function success(position) {
     var lat = position.coords.latitude, lon = position.coords.longitude;
     var heading;
     if(position.coords.heading){
-    heading = 30;
+    heading = position.coords.heading;
     }
     else{
         heading = 0;
