@@ -22,6 +22,7 @@
 <div id="map" style="margin: 0px; width:100%; height:75%; line-height: 120%;"></div>
 <h6>
     <button id="traceBtn" onclick="traceClickHandler()">현재위치 추적 시작</button>
+    <button id="traceBtn" onclick="movePosition()">현재위치로 지도 이동</button>
     <button onclick="moveCenter()">중심 위치</button>
     <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
     <a id="link">길 찾기</a><br>
@@ -71,8 +72,6 @@ function Request(){
    return requestParam;
  }
 }
-
-
 // 조사구역에 따른 자료파일 설정
 switch (mapID){
 case '37604039' : var mapCenter = new kakao.maps.LatLng(37.9125, 126.9625); var polygonFile ='./data/Yangju/polygon01.txt'; var polygonCenterFile='./data/Yangju/polygonCenter01.txt'; break;
@@ -152,21 +151,47 @@ function new_window(){
     if(document.formA.polID.value==''){
        alert('먼저 폴리곤을 선택해 주세요');}
     else{
-    var objPopup = window.open('','myWindow');
-    document.formA.target="myWindow";      // 타켓
-    document.formA.action="http://koreanplant.info/forest/recordYangju.html";       // 수행할 경로
+        recordInfo();
+        var objPopup = window.open('','myWindow');
+        document.formA.target="myWindow";      // 타켓
+        document.formA.action="http://koreanplant.info/forest/recordYangju.html";       // 수행할 경로
             if ( objPopup == null){                                  // 팝업이 뜨는지 확인
-            alert('차단된 팝업창을 허용해 주세요');}
-        else{
-            document.formA.submit();
-            objPopup.focus();
+                alert('차단된 팝업창을 허용해 주세요');}
+            else{
+                document.formA.submit();
+                objPopup.focus();
         }
+    //기록용 정보 받기
     }
+}
+function recordInfo(){
+    //기록 시간 받기
+    var time= new Date(); //시간받기위해서 new date
+    var month = time.getMonth()+1;
+    document.getElementById("recDate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+    document.formA.recDate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+    //관측지점 받기
+    navigator.geolocation.getCurrentPosition(success2, error2, options2)
+    function success2(position) {
+        document.getElementById("position_lat").innerHTML=position.coords.latitude;
+        document.getElementById("position_long").innerHTML=position.coords.longitude;
+        document.formA.position_lat.value = position.coords.latitude;
+        document.formA.position_long.value = position.coords.longitude;
+    }
+    function error2() {
+        alert('현재 위치를 알 수 없습니다');
+    }
+    var options2 = {
+        enableHighAccuracy: true,
+        maximumAge: 30000,
+        timeout: 10000
+    };
+ 
 }
 // 현재위치 추적 시작-끄기
 var options = {
   enableHighAccuracy: true,
-  timeout: 5000,
+  timeout: 2000,
   maximumAge: 0
 };
 var tracing = true;
@@ -183,14 +208,13 @@ function traceClickHandler(){
     };
 };
 function success(position) {
-    var lat = position.coords.latitude, // 위도
-            lon = position.coords.longitude; // 경도
-        var locPosition = new kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
-        displayMarker(locPosition);
+    var lat = position.coords.latitude, lon = position.coords.longitude, heading = position.coords.heading;
+    var locPosition = new kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+    displayMarker(locPosition);
 }
 function error(err) {
     alert('현재 위치를 알 수 없습니다');
-	var locPosition = mapCenter; // 지도의 중심 좌표(청주시청)
+	var locPosition = mapCenter; // 지도의 중심 좌표
         displayMarker(locPosition);
 }
 function traceStart() {
@@ -199,13 +223,45 @@ function traceStart() {
 function traceStop() {
     navigator.geolocation.clearWatch(watchid);
 }
-
+// 마커 표시-현재위치 추적
+var marker1= new kakao.maps.Marker();
+function displayMarker(locPosition) {
+    marker1.setMap(null);
+    var imageSrc = blueDot; // 마커이미지의 주소입니다   
+    var imageSize = new kakao.maps.Size(12, 12); 
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
+	marker1 = new kakao.maps.Marker({  
+        map: map, 
+        position: locPosition,
+		image: markerImage
+    }); 
+	marker1.setMap(map); 
+}
 
 // 마커 표시하고 센터 이동하기-현재위치
+function movePosition(){
+    var locPosition;
+    navigator.geolocation.getCurrentPosition(success2, error2, options2)
+    function success2(position) {
+        var lat = position.coords.latitude, lon = position.coords.longitude, heading = position.coords.heading;
+        //var altitude = position.coords.latitude;
+        locPosition = new kakao.maps.LatLng(lat, lon);
+        console.log(heading);
+        displayMarker2(locPosition);
+    }
+    function error2() {
+        alert('현재 위치를 알 수 없습니다');
+    }
+    var options2 = {
+        enableHighAccuracy: true,
+        maximumAge: 30000,
+        timeout: 10000
+    };
+}
 var marker2= new kakao.maps.Marker();
-function displayMarker(locPosition) {
+function displayMarker2(locPosition) {
     marker2.setMap(null);
-    var imageSrc = blueDot; // 마커이미지의 주소입니다   
+    var imageSrc = yellowDot; // 마커이미지의 주소입니다   
     var imageSize = new kakao.maps.Size(12, 12); 
     var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
 	marker2 = new kakao.maps.Marker({  
@@ -231,10 +287,10 @@ function displayMarker3(locPosition) {
     });
     marker3.setMap(map);
 }  
-// 청주시청으로 이동
+// 중심좌표로 이동
 function moveCenter(){
-var locPosition = mapCenter; // 지도의 중심좌표(청주시청)
-map.setCenter(locPosition);   
+    var locPosition = mapCenter; // 지도의 중심좌표
+    map.setCenter(locPosition);   
 }
 // 도시 경계 그리기
 function drawBoundary(boundaryPath){
@@ -251,7 +307,7 @@ function drawBoundary(boundaryPath){
 function drawPolygonA(polygonPaths){
     for (var i = 0; i < polygonPaths.length; i ++) { displayArea(polygonPaths[i]);}
 }
-var pastpolygon = new kakao.maps.Polygon();
+
 function displayArea(polygonPaths) {
     var stroCol ='#0101DF';
     var fillCol ='#ffffff';
@@ -271,6 +327,7 @@ function displayArea(polygonPaths) {
         //선택 폴리곤 색칠
         polygon.setOptions({ fillColor: '#0101DF', fillOpacity: 0.3});   
         
+        //기록용 정보
         var result2Div = document.getElementById('polID');
         result2Div.innerHTML = polygonPaths.name;
         document.formA.polID.value = polygonPaths.name;
@@ -289,7 +346,7 @@ function displayArea(polygonPaths) {
         function error2() {
             alert('현재 위치를 알 수 없습니다');
         }
-        const options2 = {
+        var options2 = {
             enableHighAccuracy: true,
             maximumAge: 30000,
             timeout: 10000
@@ -315,7 +372,6 @@ function drawRectangle(rectanglePath){
         rectangleLayer.setMap(map);
     };
 }
-
 //지도에 텍스트 표시하기-격자 이름
 function drawText(coordList){
     for (var i = 0; i < coordList.length; i ++) {
@@ -326,12 +382,6 @@ function drawText(coordList){
         recText.setMap(map);
     };
 }
-
-
-// 폴리곤 텍스트 및 중심점 표시하기(끄기 켜기 포함)
-var polygonNameVisible = false;
-var coordList2=[];
-
 //폴리곤 이름 켜고 끄기
 function polygonNameClickHandler(){
     console.log("polygonNameClickHandler() call")
@@ -345,26 +395,10 @@ function polygonNameClickHandler(){
         document.getElementById("polygonNameBtn").innerText = "폴리곤이름 끄기";
     };
 };
-
-
-// 폴리곤 이름 좌표 불러오기
-var pointText3 = new XMLHttpRequest();
-pointText3.open('GET', polygonCenterFile, true);
-pointText3.overrideMimeType('text/plain; charset=utf-8');
-pointText3.onload = function() {
-    if (pointText3.status == 200) {
-        coordList2 = eval(pointText3.responseText);
-    };
-};
-pointText3.send(null);
-
-var polygonNameArr = [];
-
 function onName() {
     console.log("onName() call")
     if(polygonNameArr.length == 0){
         for (var i = 0; i < coordList2.length; i ++) {
-            // 커스텀 오버레이를 생성합니다
             var customOverlay = new kakao.maps.CustomOverlay({
                 position: coordList2[i].latlng,
                 content: coordList2[i].title
@@ -378,7 +412,6 @@ function onName() {
         }
     }
 };
-
 function offName(){
     console.log("offName() call")
     if(polygonNameArr.length > 0) {
@@ -437,9 +470,7 @@ kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
     result2Div.innerHTML = message2;
     displayMarker3(latlng);
 });
-
 // 도시 경계 표시하기
-
 var boundary = new XMLHttpRequest();
 boundary.open('GET', boundaryFile, true);
 boundary.overrideMimeType('text/plain; charset=utf-8');
@@ -450,7 +481,6 @@ boundary.onload = function() {
     };
 };
 boundary.send(null);
-
 //지도에 격자 표시하기
 var rectangle = new XMLHttpRequest();
 rectangle.open('GET', rectangleFile, true);
@@ -462,7 +492,6 @@ rectangle.onload = function() {
     };
 };
 rectangle.send(null);
-
 //격자 번호 표시하기
 var pointText1 = new XMLHttpRequest();
 pointText1.open('GET', rectangleCenterFile, true);
@@ -474,8 +503,8 @@ pointText1.onload = function() {
     };
 };
 pointText1.send(null);
-
 //지도에 조사폴리곤 표시하기
+var pastpolygon = new kakao.maps.Polygon();
 var polygonFile1 = new XMLHttpRequest();
 polygonFile1.open('GET', polygonFile, true);
 polygonFile1.overrideMimeType('text/plain; charset=utf-8');
@@ -486,7 +515,20 @@ polygonFile1.onload = function() {
     };
 };
 polygonFile1.send(null);
-
+// 폴리곤 텍스트 및 중심점 표시하기(끄기 켜기 포함)
+var polygonNameVisible = false;
+var coordList2=[];
+// 폴리곤 이름 좌표 불러오기
+var pointText3 = new XMLHttpRequest();
+pointText3.open('GET', polygonCenterFile, true);
+pointText3.overrideMimeType('text/plain; charset=utf-8');
+pointText3.onload = function() {
+    if (pointText3.status == 200) {
+        coordList2 = eval(pointText3.responseText);
+    };
+};
+pointText3.send(null);
+var polygonNameArr = [];
 </script>
 </body>
 </html>
