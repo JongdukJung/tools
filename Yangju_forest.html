@@ -222,14 +222,15 @@ function success(position) {
     //alpha = position.coords.heading;
   
 
-function handleOrientation(event) {
-    absolute = event.absolute;
-}
+    navigator.compass.getCurrentHeading(onSuccess, onError);
+function onSuccess(heading) {
+    absolute=heading;
+};
 
-window.addEventListener("deviceorientation", handleOrientation);
-    
- 
-console.log(absolute);
+function onError(error) {
+    alert('CompassError: ' + error.code);
+};
+
     //}
     //else{
     //    alpha = 0;
