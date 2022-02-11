@@ -25,7 +25,7 @@
     <button id="traceBtn" onclick="movePosition()">현재위치로 지도 이동</button>
     <button onclick="moveCenter()">중심 위치</button>
     <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
-    <a id="link">길 찾기1</a><br>
+    <a id="link">길 찾기</a><br>
 클릭 지점 : <span id="result2"></span>   <span id="result"></span><br>
 선택 폴리곤 : <h7 id="polID"></h7><br>
 관측 지점 : <span id="position_lat"></span> <span id="position_long"></span><br>
@@ -214,22 +214,21 @@ function traceStop() {
     navigator.geolocation.clearWatch(watchid);
 }
 
-var absolute;
+var alpha;
+function handleOrientation(event) {
+    alpha = event.alpha;
+}
+window.addEventListener("deviceorientation", handleOrientation);
+console.log(alpha);
+
 function success(position) {
     var lat = position.coords.latitude, lon = position.coords.longitude;
     
     //if(position.coords.heading){
     //alpha = position.coords.heading;
-  
+ 
 
-    navigator.compass.getCurrentHeading(onSuccess, onError);
-function onSuccess(heading) {
-    absolute=heading;
-};
-
-function onError(error) {
-    alert('CompassError: ' + error.code);
-};
+   
 
     //}
     //else{
@@ -237,7 +236,7 @@ function onError(error) {
     //}
 
     var locPosition = new kakao.maps.LatLng(lat, lon);
-    displayMarker(locPosition, absolute);
+    displayMarker(locPosition, alpha);
 }
 function error(err) {
     alert('현재 위치를 알 수 없습니다');
@@ -247,9 +246,9 @@ function error(err) {
 
 // 마커 표시-현재위치 추적
 var marker1= new kakao.maps.Marker();
-function displayMarker(locPosition, absolute) {
+function displayMarker(locPosition, alpha) {
     marker1.setMap(null);
-    var markerImage = '<div class="image-box" style="transform:rotate('+absolute+'deg)";> <img class="image" src='+currentArrow+'></div>';
+    var markerImage = '<div class="image-box" style="transform:rotate('+alpha+'deg)";> <img class="image" src='+currentArrow+'></div>';
     marker1 = new kakao.maps.CustomOverlay({  
         map: map, 
         position: locPosition,
