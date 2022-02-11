@@ -209,16 +209,44 @@ function traceClickHandler(){
 };
 function success(position) {
     var lat = position.coords.latitude, lon = position.coords.longitude;
-    var heading;
-    if(position.coords.heading){
+    var alpha;
+    //if(position.coords.heading){
     //heading = position.coords.heading;
     //heading = instanceOfDeviceOrientationEvent.alpha;
-    heading = webkitCompassHeading;
-    console.log(heading);
+
+    // Any other device, with Chrome browser
+    if ('ondeviceorientationabsolute' in window) {
+        // Chrome 50+ specific
+        window.addEventListener('deviceorientationabsolute', function (event) {
+            alpha = 360 - event.alpha;
+            if (alpha < 0) { alpha += 360; }
+            if (alpha > 360) { alpha -= 360; }
+
+            // Calculated heading
+            console.log (alpha);
+        });
     }
-    else{
-        heading = 0;
+    else {
+        window.addEventListener('deviceorientation', function (event) {
+            alpha = 180 - event.alpha;
+            if (alpha < 0) {
+                alpha += 360;
+            }
+            if (alpha > 360) {
+                alpha -= 360;
+            }
+
+            // Calculated heading
+            console.log (alpha);
+        });
     }
+
+var heading=alpha;
+    //}
+    //else{
+    //    heading = 0;
+    //}
+
     var locPosition = new kakao.maps.LatLng(lat, lon);
     displayMarker(locPosition, heading);
 }
