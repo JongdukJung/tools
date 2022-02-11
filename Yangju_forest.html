@@ -161,9 +161,9 @@ function new_window(){
                 document.formA.submit();
                 objPopup.focus();
         }
-    //기록용 정보 받기
     }
 }
+//기록용 정보 받기
 function recordInfo(){
     //기록 시간 받기
     var time= new Date(); //시간받기위해서 new date
@@ -207,41 +207,29 @@ function traceClickHandler(){
         document.getElementById("traceBtn").innerText = "현재위치 추적 중지";
     };
 };
+function traceStart() {
+ watchid = navigator.geolocation.watchPosition(success, error, options);
+}
+function traceStop() {
+    navigator.geolocation.clearWatch(watchid);
+}
+var heading;
 function success(position) {
     var lat = position.coords.latitude, lon = position.coords.longitude;
-    var alpha;
+    
     //if(position.coords.heading){
     //heading = position.coords.heading;
-    //heading = instanceOfDeviceOrientationEvent.alpha;
+  
 
-    // Any other device, with Chrome browser
-    if ('ondeviceorientationabsolute' in window) {
-        // Chrome 50+ specific
-        window.addEventListener('deviceorientationabsolute', function (event) {
-            alpha = 360 - event.alpha;
-            if (alpha < 0) { alpha += 360; }
-            if (alpha > 360) { alpha -= 360; }
+function handleOrientation(event) {
+    const alpha = event.alpha;
+heading=alpha;
+}
 
-            // Calculated heading
-            console.log (alpha);
-        });
-    }
-    else {
-        window.addEventListener('deviceorientation', function (event) {
-            alpha = 180 - event.alpha;
-            if (alpha < 0) {
-                alpha += 360;
-            }
-            if (alpha > 360) {
-                alpha -= 360;
-            }
-
-            // Calculated heading
-            console.log (alpha);
-        });
-    }
-
-var heading=alpha;
+window.addEventListener("deviceorientation", handleOrientation);
+    
+ 
+console.log(alpha);
     //}
     //else{
     //    heading = 0;
@@ -255,12 +243,7 @@ function error(err) {
 	var locPosition = mapCenter; // 지도의 중심 좌표
         displayMarker(locPosition, 0);
 }
-function traceStart() {
- watchid = navigator.geolocation.watchPosition(success, error, options);
-}
-function traceStop() {
-    navigator.geolocation.clearWatch(watchid);
-}
+
 // 마커 표시-현재위치 추적
 var marker1= new kakao.maps.Marker();
 function displayMarker(locPosition, heading) {
