@@ -212,7 +212,8 @@ function success(position) {
     var heading;
     if(position.coords.heading){
     //heading = position.coords.heading;
-    heading = instanceOfDeviceOrientationEvent.alpha;
+    //heading = instanceOfDeviceOrientationEvent.alpha;
+    heading = webkitCompassHeading.alpha;
 
     }
     else{
