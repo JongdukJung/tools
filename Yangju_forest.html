@@ -211,12 +211,14 @@ function success(position) {
     var lat = position.coords.latitude, lon = position.coords.longitude;
     var heading;
     if(position.coords.heading){
-    heading = position.coords.heading;
+    //heading = position.coords.heading;
+    heading = instanceOfDeviceOrientationEvent.alpha;
+
     }
     else{
         heading = 0;
     }
-    var locPosition = new kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+    var locPosition = new kakao.maps.LatLng(lat, lon);
     displayMarker(locPosition, heading);
 }
 function error(err) {
@@ -235,7 +237,7 @@ var marker1= new kakao.maps.Marker();
 function displayMarker(locPosition, heading) {
     marker1.setMap(null);
     var markerImage = '<div class="image-box" style="transform:rotate('+heading+'deg)";> <img class="image" src='+currentArrow+'></div>';
-    console.log(heading);
+    //console.log(heading);
 	marker1 = new kakao.maps.CustomOverlay({  
         map: map, 
         position: locPosition,
@@ -251,7 +253,6 @@ function movePosition(){
     navigator.geolocation.getCurrentPosition(success2, error2, options2)
     function success2(position) {
         var lat = position.coords.latitude, lon = position.coords.longitude, heading = position.coords.heading;
-        //var altitude = position.coords.latitude;
         locPosition = new kakao.maps.LatLng(lat, lon);
         displayMarker2(locPosition);
     }
