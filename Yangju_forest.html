@@ -252,7 +252,7 @@ function movePosition(){
     var locPosition;
     navigator.geolocation.getCurrentPosition(success2, error2, options2)
     function success2(position) {
-        var lat = position.coords.latitude, lon = position.coords.longitude, heading = position.coords.heading;
+        var lat = position.coords.latitude, lon = position.coords.longitude
         locPosition = new kakao.maps.LatLng(lat, lon);
         displayMarker2(locPosition);
     }
