@@ -213,17 +213,17 @@ function traceStart() {
 function traceStop() {
     navigator.geolocation.clearWatch(watchid);
 }
-var heading;
+
+var alpha;
 function success(position) {
     var lat = position.coords.latitude, lon = position.coords.longitude;
     
     //if(position.coords.heading){
-    //heading = position.coords.heading;
+    //alpha = position.coords.heading;
   
 
 function handleOrientation(event) {
-    const alpha = event.alpha;
-heading=alpha;
+    alpha = event.alpha;
 }
 
 window.addEventListener("deviceorientation", handleOrientation);
@@ -232,11 +232,11 @@ window.addEventListener("deviceorientation", handleOrientation);
 console.log(alpha);
     //}
     //else{
-    //    heading = 0;
+    //    alpha = 0;
     //}
 
     var locPosition = new kakao.maps.LatLng(lat, lon);
-    displayMarker(locPosition, heading);
+    displayMarker(locPosition, alpha);
 }
 function error(err) {
     alert('현재 위치를 알 수 없습니다');
@@ -246,11 +246,10 @@ function error(err) {
 
 // 마커 표시-현재위치 추적
 var marker1= new kakao.maps.Marker();
-function displayMarker(locPosition, heading) {
+function displayMarker(locPosition, alpha) {
     marker1.setMap(null);
-    var markerImage = '<div class="image-box" style="transform:rotate('+heading+'deg)";> <img class="image" src='+currentArrow+'></div>';
-    //console.log(heading);
-	marker1 = new kakao.maps.CustomOverlay({  
+    var markerImage = '<div class="image-box" style="transform:rotate('+alpha+'deg)";> <img class="image" src='+currentArrow+'></div>';
+    marker1 = new kakao.maps.CustomOverlay({  
         map: map, 
         position: locPosition,
 		content: markerImage,
