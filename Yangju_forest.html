@@ -215,25 +215,15 @@ function traceStop() {
 }
 
 var alpha;
-function handleOrientation(event) {
-    alpha = 360-event.alpha;
-}
-window.addEventListener("deviceorientation", handleOrientation);
-console.log(alpha);
-
 function success(position) {
     var lat = position.coords.latitude, lon = position.coords.longitude;
     
-    //if(position.coords.heading){
-    //alpha = position.coords.heading;
- 
-
-   
-
-    //}
-    //else{
-    //    alpha = 0;
-    //}
+    if(position.coords.heading){
+        alpha = position.coords.heading;
+    }
+    else{
+        alpha = 0;
+    }
 
     var locPosition = new kakao.maps.LatLng(lat, lon);
     displayMarker(locPosition, alpha);
