@@ -25,7 +25,7 @@
     <button id="traceBtn" onclick="movePosition()">현재위치로 지도 이동</button>
     <button onclick="moveCenter()">중심 위치</button>
     <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
-    <a id="link">길 찾기</a><br>
+    <a id="link">길 찾기1</a><br>
 클릭 지점 : <span id="result2"></span>   <span id="result"></span><br>
 선택 폴리곤 : <h7 id="polID"></h7><br>
 관측 지점 : <span id="position_lat"></span> <span id="position_long"></span><br>
@@ -215,19 +215,51 @@ function traceStop() {
 }
 
 var alpha;
+const isIOS = !(
+  navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
+  navigator.userAgent.match(/AppleWebKit/)
+);
 function success(position) {
     var lat = position.coords.latitude, lon = position.coords.longitude;
-    
-    if(position.coords.heading){
+ 
+
+
+
+  if (isIOS) {
+    DeviceOrientationEvent.requestPermission()
+      .then((response) => {
+        if (response === "granted") {
+          window.addEventListener("deviceorientation", handler, true);
+        }
+      })
+      .catch(() => alert("compass not supported"));
+  } 
+  else {
+    window.addEventListener("deviceorientationabsolute", handler, true);
+  }
+
+
+
+
+
+
+
+
+
+  /*  if(position.coords.heading){
         alpha = position.coords.heading;
     }
     else{
         alpha = 0;
-    }
+    } */
 
     var locPosition = new kakao.maps.LatLng(lat, lon);
     displayMarker(locPosition, alpha);
 }
+function handler(e) {
+  alpha = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+}
+
 function error(err) {
     alert('현재 위치를 알 수 없습니다');
 	var locPosition = mapCenter; // 지도의 중심 좌표
