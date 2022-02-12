@@ -223,9 +223,6 @@ function success(position) {
 }
 function handler(compass) {
   alpha = compass.webkitCompassHeading || Math.abs(compass.alpha - 360);
-
-alert (compass.alpha, compass.webkitCompassHeading, compass.webkitCompassAccuracy);
-
 }
 
 function error(err) {
