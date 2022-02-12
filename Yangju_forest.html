@@ -222,7 +222,7 @@ function success(position) {
     displayMarker(locPosition, alpha);
 }
 function handler(e) {
-  alpha = e.webkitCompassHeading || 0;
+  alpha = e.webkitCompassHeading || Math.abs(e.alpha - 360);
 }
 
 function error(err) {
@@ -235,7 +235,7 @@ function error(err) {
 var marker1= new kakao.maps.Marker();
 function displayMarker(locPosition, alpha) {
     marker1.setMap(null);
-    var markerImage = '<div class="image-box" style="transform:rotate('+alpha+'deg)";> <img class="image" src='+currentArrow+'></div>';
+    var markerImage = '<div class="image-box" style="transform:rotate(-'+alpha+'deg)";> <img class="image" src='+currentArrow+'></div>';
     marker1 = new kakao.maps.CustomOverlay({  
         map: map, 
         position: locPosition,
