@@ -223,9 +223,6 @@ function success(position) {
 }
 function handler(e) {
   alpha = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-  alpha = alpha-45;
-  if (alpha > 360){alpha = alpha-360;}
-  if (alpha < 0){alpha = alpha+360;}
 }
 
 function error(err) {
