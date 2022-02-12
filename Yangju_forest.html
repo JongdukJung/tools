@@ -221,8 +221,11 @@ function success(position) {
     var locPosition = new kakao.maps.LatLng(lat, lon);
     displayMarker(locPosition, alpha);
 }
-function handler(e) {
-  alpha = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+function handler(compass) {
+  alpha = compass.webkitCompassHeading || Math.abs(compass.alpha - 360);
+
+alert (compass.webkitCompassAccuracy);
+
 }
 
 function error(err) {
