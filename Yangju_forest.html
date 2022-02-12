@@ -259,7 +259,7 @@ function success(position) {
     displayMarker(locPosition, alpha);
 }
 function handler(e) {
-  alpha = e.webkitCompassHeading || Math.abs(e.alpha - 360);
+  alpha = e.webkitCompassHeading || Math.abs(e.alpha - 360+45);
 }
 
 function error(err) {
