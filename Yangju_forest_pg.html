@@ -47,6 +47,7 @@
     <input type="hidden" name="position_long" value=""/>
     <input type="hidden" name="recDate" value=""/>
 </form>
+</br>
 </h6>
 <script>
    
@@ -159,8 +160,8 @@ case '37705021' : var mapCenter = new kakao.maps.LatLng(37.6875, 127.0125); var 
 //조사자 입력 값 받기
 function input_surveyer(){
         const surveyers = document.getElementById("surveyers").value;
-        document.formA.surveyer_new.value = surveyer;
-        document.formB.surveyer_new.value = surveyer;
+        document.formA.surveyer_new.value = surveyers;
+        document.formB.surveyer_new.value = surveyers;
 }
 
 //기록창 띄우기(비오톱)
