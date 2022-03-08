@@ -27,17 +27,26 @@
     <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
     <a id="link">길 찾기</a><br>
 클릭 지점 : <span id="result2"></span>   <span id="result"></span><br>
-선택 폴리곤 : <h7 id="polID"></h7><br>
+선택폴리곤 : <h7 id="polID"></h7><br>
 관측 지점 : <span id="position_lat"></span> <span id="position_long"></span><br>
 관측 일시 : <span id="recDate"></span><br>
 
+조사자입력 : <input type="text" id="surveyers" value="조사자1, 조사자2" onkeyup="input_surveyer()"/>
 <form name="formA" method="post" action="">
-    <input type="text" name="surveyer_new" value="조사자1, 조사자2"/>
-    <input type="button" value="기록/수정" onclick="new_window()"/><br>
+    <input type="button" value="비오톱 정보 기록/수정" onclick="new_window_biotope()"/><br>
+    <input type="hidden" name="surveyer_new" value=""/>
     <input type="hidden" name="polID" value=""/>
     <input type="hidden" name="position_lat" value=""/>
     <input type="hidden" name="position_long" value=""/>
     <input type="hidden" name="recDate" value=""/>
+</form>
+<form name="formB" method="post" action="">
+    <input type="button" value="   생태계교란종 기록   " onclick="new_window_invasive()"/><br>
+    <input type="hidden" name="surveyer_new" value=""/>
+    <input type="hidden" name="position_lat" value=""/>
+    <input type="hidden" name="position_long" value=""/>
+    <input type="hidden" name="recDate" value=""/>
+</form>
 </h6>
 <script>
    
@@ -147,8 +156,15 @@ case '37608030' : var mapCenter = new kakao.maps.LatLng(37.6875, 126.9875); var 
 case '37705021' : var mapCenter = new kakao.maps.LatLng(37.6875, 127.0125); var polygonFile ='./data/Yangju/polygon19.txt'; var polygonCenterFile='./data/Yangju/polygonCenter19.txt'; break;
 }
 
-//기록창 띄우기
-function new_window(){
+//조사자 입력 값 받기
+function input_surveyer(){
+        const surveyers = document.getElementById("surveyers").value;
+        document.formA.surveyer_new.value = surveyer;
+        document.formB.surveyer_new.value = surveyer;
+}
+
+//기록창 띄우기(비오톱)
+function new_window_biotope(){
     if(document.formA.polID.value==''){
        alert('먼저 폴리곤을 선택해 주세요');}
     else{
@@ -164,7 +180,21 @@ function new_window(){
         }
     }
 }
-//기록용 정보 받기
+//기록창 띄우기(생태계교란종)
+function new_window_invasive(){
+        recordInfo2();
+        var objPopup = window.open('','myWindow');
+        document.formB.target="myWindow";      // 타켓
+        document.formB.action="http://221.143.128.201:999/Yangju/record_invasive_pg.html";       // 수행할 경로
+            if ( objPopup == null){                                  // 팝업이 뜨는지 확인
+                alert('차단된 팝업창을 허용해 주세요');}
+            else{
+                document.formB.submit();
+                objPopup.focus();
+        }
+    }
+
+//기록용 정보 받기(비오톱)
 function recordInfo(){
     //기록 시간 받기
     var time= new Date(); //시간받기위해서 new date
@@ -187,7 +217,30 @@ function recordInfo(){
         maximumAge: 30000,
         timeout: 10000
     };
- 
+}
+//기록용 정보 받기(생태게교란종)
+function recordInfo2(){
+    //기록 시간 받기
+    var time= new Date(); //시간받기위해서 new date
+    var month = time.getMonth()+1;
+    document.getElementById("recDate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+    document.formB.recDate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+    //관측지점 받기
+    navigator.geolocation.getCurrentPosition(success2, error2, options2)
+    function success2(position) {
+        document.getElementById("position_lat").innerHTML=position.coords.latitude;
+        document.getElementById("position_long").innerHTML=position.coords.longitude;
+        document.formB.position_lat.value = position.coords.latitude;
+        document.formB.position_long.value = position.coords.longitude;
+    }
+    function error2() {
+        alert('현재 위치를 알 수 없습니다');
+    }
+    var options2 = {
+        enableHighAccuracy: true,
+        maximumAge: 30000,
+        timeout: 10000
+    };
 }
 // 현재위치 추적 시작-끄기
 var options = {
