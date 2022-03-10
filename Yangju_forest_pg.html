@@ -31,7 +31,7 @@
 관측 지점 : <span id="position_lat"></span> <span id="position_long"></span><br>
 관측 일시 : <span id="recDate"></span><br>
 
-조사자입력 : <input type="text" id="surveyers" value="조사자1, 조사자2" onkeyup="input_surveyer()"/>
+조사자입력 : <input type="text" id="surveyers" value="조사자1, 조사자2"/>
 <form name="formA" method="post" action="">
     <input type="button" value="비오톱 정보 기록/수정" onclick="new_window_biotope()"/><br>
     <input type="hidden" name="surveyer_new" value=""/>
@@ -219,7 +219,7 @@ function recordInfo(){
         timeout: 10000
     };
 }
-//기록용 정보 받기(생태게교란종)
+//기록용 정보 받기(생태계교란종)
 function recordInfo2(){
     //기록 시간 받기
     var time= new Date(); //시간받기위해서 new date
