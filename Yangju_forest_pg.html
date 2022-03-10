@@ -157,13 +157,6 @@ case '37608030' : var mapCenter = new kakao.maps.LatLng(37.6875, 126.9875); var 
 case '37705021' : var mapCenter = new kakao.maps.LatLng(37.6875, 127.0125); var polygonFile ='./data/Yangju/polygon19.txt'; var polygonCenterFile='./data/Yangju/polygonCenter19.txt'; break;
 }
 
-//조사자 입력 값 받기
-function input_surveyer(){
-        const surveyers = document.getElementById("surveyers").value;
-        document.formA.surveyer_new.value = surveyers;
-        document.formB.surveyer_new.value = surveyers;
-}
-
 //기록창 띄우기(비오톱)
 function new_window_biotope(){
     if(document.formA.polID.value==''){
@@ -197,6 +190,9 @@ function new_window_invasive(){
 
 //기록용 정보 받기(비오톱)
 function recordInfo(){
+    //조사자 입력 값 받기
+        const surveyers = document.getElementById("surveyers").value;
+        document.formA.surveyer_new.value = surveyers;
     //기록 시간 받기
     var time= new Date(); //시간받기위해서 new date
     var month = time.getMonth()+1;
@@ -221,6 +217,9 @@ function recordInfo(){
 }
 //기록용 정보 받기(생태계교란종)
 function recordInfo2(){
+    //조사자 입력 값 받기
+        const surveyers = document.getElementById("surveyers").value;
+        document.formB.surveyer_new.value = surveyers;
     //기록 시간 받기
     var time= new Date(); //시간받기위해서 new date
     var month = time.getMonth()+1;
