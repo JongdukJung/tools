@@ -29,7 +29,7 @@
 클릭 지점 : <span id="result2"></span>   <span id="result"></span><br>
 선택폴리곤 : <h7 id="polID"></h7><br>
 관측 지점 : <span id="position_lat"></span> <span id="position_long"></span><br>
-관측 일시 : <span id="recDate"></span><br>
+관측 일시 : <span id="recdate"></span><br>
 
 조사자입력 : <input type="text" id="surveyers" value="조사자1, 조사자2"/>
 <form name="formA" method="post" action="">
@@ -38,14 +38,14 @@
     <input type="hidden" name="polID" value=""/>
     <input type="hidden" name="position_lat" value=""/>
     <input type="hidden" name="position_long" value=""/>
-    <input type="hidden" name="recDate" value=""/>
+    <input type="hidden" name="recdate" value=""/>
 </form>
 <form name="formB" method="post" action="">
     <input type="button" value="   생태계교란종 기록   " onclick="new_window_invasive()"/><br>
     <input type="hidden" name="surveyer_new" value=""/>
     <input type="hidden" name="position_lat" value=""/>
     <input type="hidden" name="position_long" value=""/>
-    <input type="hidden" name="recDate" value=""/>
+    <input type="hidden" name="recdate" value=""/>
 </form>
 </br>
 </h6>
@@ -196,8 +196,8 @@ function recordInfo(){
     //기록 시간 받기
     var time= new Date(); //시간받기위해서 new date
     var month = time.getMonth()+1;
-    document.getElementById("recDate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
-    document.formA.recDate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+    document.getElementById("recdate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+    document.formA.recdate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
     //관측지점 받기
     navigator.geolocation.getCurrentPosition(success2, error2, options2)
     function success2(position) {
@@ -223,8 +223,8 @@ function recordInfo2(){
     //기록 시간 받기
     var time= new Date(); //시간받기위해서 new date
     var month = time.getMonth()+1;
-    document.getElementById("recDate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
-    document.formB.recDate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+    document.getElementById("recdate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+    document.formB.recdate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
     //관측지점 받기
     navigator.geolocation.getCurrentPosition(success2, error2, options2)
     function success2(position) {
@@ -394,8 +394,8 @@ function displayArea(polygonPaths) {
         //기록 시간 받기
         var time= new Date(); //시간받기위해서 new date
         var month = time.getMonth()+1;
-        document.getElementById("recDate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
-        document.formA.recDate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+        document.getElementById("recdate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+        document.formA.recdate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
         //관측지점 받기
         function success2(position) {
           document.getElementById("position_lat").innerHTML=position.coords.latitude;
