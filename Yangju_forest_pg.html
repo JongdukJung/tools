@@ -32,22 +32,22 @@
 관측 일시 : <span id="recdate"></span><br>
 
 조사자입력 : <input type="text" id="surveyers" value=""/>
-<form name="formA" method="post" action="">
+<table> 
+<tr><td><form name="formA" method="post" action="">
     <input type="button" value="비오톱 정보 기록/수정" onclick="new_window_biotope()"/>
     <input type="hidden" name="surveyer_new" value=""/>
     <input type="hidden" name="polID" value=""/>
     <input type="hidden" name="position_lat" value=""/>
     <input type="hidden" name="position_long" value=""/>
     <input type="hidden" name="recdate" value=""/>
-</form>
-<form name="formB" method="post" action="">
-    <input type="button" value="   생태계교란종 기록   " onclick="new_window_invasive()"/><br>
+</form></td>
+<td><form name="formB" method="post" action="">
+    <input type="button" value="   생태계교란종 기록   " onclick="new_window_invasive()"/>
     <input type="hidden" name="surveyer_new" value=""/>
     <input type="hidden" name="position_lat" value=""/>
     <input type="hidden" name="position_long" value=""/>
     <input type="hidden" name="recdate" value=""/>
-</form>
-</br>
+</form></td></tr></table>
 </h6>
 <script>
    
@@ -161,38 +161,40 @@ case '37705021' : var mapCenter = new kakao.maps.LatLng(37.6875, 127.0125); var 
 function new_window_biotope(){
     if(document.formA.polID.value==''){
        alert('먼저 폴리곤을 선택해 주세요');}
-    else if(document.formA.surveyer_new.value==''){
-       alert('조사자를 입력해 주세요=조사자1, 조사자2...');}   
     else{
         recordInfo();
-        var objPopup = window.open('','myWindow');
-        document.formA.target="myWindow";      // 타켓
-        document.formA.action="http://221.143.128.201:999/Yangju/record_pg.html";       // 수행할 경로
+        if(document.formA.surveyer_new.value==''){
+            alert('조사자를 입력해 주세요=조사자1, 조사자2...');}
+        else{
+            var objPopup = window.open('','myWindow');
+            document.formA.target="myWindow";      // 타켓
+            document.formA.action="http://221.143.128.201:999/Yangju/record_pg.html";       // 수행할 경로
             if ( objPopup == null){                                  // 팝업이 뜨는지 확인
                 alert('차단된 팝업창을 허용해 주세요');}
             else{
                 document.formA.submit();
                 objPopup.focus();
+            }
         }
     }
 }
 //기록창 띄우기(생태계교란종)
 function new_window_invasive(){
-        if(document.formA.surveyer_new.value==''){
-            alert('조사자를 입력해 주세요=조사자1, 조사자2...');}
+    recordInfo2();
+    if(document.formB.surveyer_new.value==''){
+        alert('조사자를 입력해 주세요=조사자1, 조사자2...');}
+    else{
+        var objPopup = window.open('','myWindow');
+        document.formB.target="myWindow";      // 타켓
+        document.formB.action="http://221.143.128.201:999/Yangju/record_invasive_pg.html";       // 수행할 경로
+        if ( objPopup == null){                                  // 팝업이 뜨는지 확인
+            alert('차단된 팝업창을 허용해 주세요');}
         else{
-            recordInfo2();
-            var objPopup = window.open('','myWindow');
-            document.formB.target="myWindow";      // 타켓
-            document.formB.action="http://221.143.128.201:999/Yangju/record_invasive_pg.html";       // 수행할 경로
-            if ( objPopup == null){                                  // 팝업이 뜨는지 확인
-                alert('차단된 팝업창을 허용해 주세요');}
-            else{
-                document.formB.submit();
-                objPopup.focus();
-            }
+            document.formB.submit();
+            objPopup.focus();
         }
     }
+}
 
 //기록용 정보 받기(비오톱)
 function recordInfo(){
