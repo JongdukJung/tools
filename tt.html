@@ -1,46 +1,537 @@
-<!doctype html> 
-<html> 
-<head> 
-<meta name="viewport" content="width=320; user-scalable=no" /> 
-<meta http-equiv="Content-type" content="text/html; charset=utf-8"> 
-<title>Camera</title> 
-
-<script src="/jquery/jquery.js"></script> 
-<script>  
- </script>
+<?php include_once $_SERVER["DOCUMENT_ROOT"]."/glib/config.php";?>
+<?php
+  error_reporting(E_ALL);
+  ini_set('display_errors', '1'); 
+?>
+<!doctype html>
+			<style type="text/css"> html, body { margin: 1px;} </style>
+       <style> h1 {color : #0101DF; font-weight: bold; font-size: 12pt;} </style>
+       <style> h2 {color : #df9101; font-weight: bold; font-size: 12pt;} </style>
+       <style> h3 {color : #008800; font-weight: bold; font-size: 12pt;} </style>
+       <style> h4 {color : #FFF000; font-size: 11pt;} </style>
+       <style> datalist {color : #df9101; line-height: 120%; font-size: 9pt;} </style>
+       <style> h7 {color : #140835; line-height: 140%; font-size: 9pt;} </style>
+			 <style> header {padding: 10px; font-size: 20px; background: #F2F2F2;} </style>
+			 <style> article {padding: 10px; font-size: 14px;} </style>
+			 <!--<style> th, td {padding: 1px; border-bottom: 1px solid #dadada;} </style>-->
+			 <style> th, td {padding: 0px; text-align:center;} </style>
+       
+<html lang="kr">
+ <head>
+  <meta charset="utf-8">
+	<meta name="viewport" content="user-scalable=yes, initial-scale=1.0, maximum-scale=2.0, minimum-scale=0.9, width=device-width">
+  <title>속성정보 상세 기록(양주)</title>
  </head>
- <body> 
- <input type="file" id="camera" name="camera" capture="camera" accept="image/*" /> 
- <br />
-<button id="savefile" onclick="downloadFiles('test.jpg', 'image/*')">파일저장</button>
-
+ <body>
+ <header><b>속성정보 상세 기록(양주)</b></header>
+ <hr>
+ <label> 사진 촬영 <input type="file" id="camera" name="camera1" capture="camera" accept="image/*" /><br/></label>
+ <h7 id="savedfile"></h7><br> 
+ <article>
  
-<script>
-const camera = document.getElementById('camera');
+<?php
+	$surveyer_d = $_POST["surveyer_new"];
+	$polID = $_POST["polID"];
+	$position_lat_d= $_POST["position_lat"];
+	$position_long_d= $_POST["position_long"];
+	$recdate_d= $_POST["recdate"];
+		
+	$conn_pg = pg_connect($db_conn_pg) or die("DB 접속에 실패했습니다.");
+	//비오톱 정보 조회
+	$query_pg = "SELECT crown_density, for_man_evi, forest_type, human_usage, dead_tree_no, dead_tree, pest, stream_status, forest_wetland, soil_humidity, rock_ratio, slope, litter_layer, soil_cha, boundary_edit, not_investigatable, potential_forest, note_ani, posib_prominant_biotope, micro_habitat, surveyer_d, tree_height, tree_coverage, subtree_height, subtree_coverage, shrub_height, shrub_coverage, herb_height, herb_coverage FROM survey_result1 WHERE polygonid='$polID'";
+	$result_pg = pg_query($conn_pg, $query_pg)or die("DB 조회에 실패했습니다.");
 
-camera.addEventListener('change', (e) => {
-var captureimage = e.target.files;});
-
-
-function downloadFiles(file_name, file_type) {
-    var file = new Blob([captureimage], {type: file_type});
-    if (window.navigator.msSaveOrOpenBlob) 
-        window.navigator.msSaveOrOpenBlob(file, file_name);
-    else { 
-        var a = document.createElement("a"),
-                url = URL.createObjectURL(file);
-        a.href = url;
-        a.download = file_name;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function() {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);  
-        }, 0); 
-    }
+	//DB 조회결과 파싱
+while( $row1 = pg_fetch_array( $result_pg ) ) {
+$crown_density=$row1["crown_density"];
+$for_man_evi=$row1["for_man_evi"];
+$forest_type=$row1["forest_type"];
+$human_usage=$row1["human_usage"];
+$dead_tree_no=$row1["dead_tree_no"];
+$dead_tree=$row1["dead_tree"];
+$pest=$row1["pest"];
+$stream_status=$row1["stream_status"];
+$forest_wetland=$row1["forest_wetland"];
+$soil_humidity=$row1["soil_humidity"];
+$rock_ratio=$row1["rock_ratio"];
+$slope=$row1["slope"];
+$litter_layer=$row1["litter_layer"];
+$soil_cha=$row1["soil_cha"];
+$boundary_edit=$row1["boundary_edit"];
+$not_investigatable=$row1["not_investigatable"];
+$potential_forest=$row1["potential_forest"];
+$note_ani=$row1["note_ani"];
+$posib_prominant_biotope=$row1["posib_prominant_biotope"];
+$micro_habitat=$row1["micro_habitat"];
+$surveyer_old=$row1["surveyer_d"];
+$tree_height=$row1["tree_height"];
+$tree_coverage=$row1["tree_coverage"];
+$subtree_height=$row1["subtree_height"];
+$subtree_coverage=$row1["subtree_coverage"];
+$shrub_height=$row1["shrub_height"];
+$shrub_coverage=$row1["shrub_coverage"];
+$herb_height=$row1["herb_height"];
+$herb_coverage=$row1["herb_coverage"];
 }
 
-</script>
+		//DB 조회결과 화면에 뿌리고 입력 받기	
+			echo '
+		<form method="post" action="record_pg2.html">
+			<input type ="hidden" name="surveyer" value="'.$surveyer_d.'">
+			<input type ="hidden" name="polID" value="'.$polID.'">
+			<input type ="hidden" name="position_lat" value="'.$position_lat_d.'">
+			<input type ="hidden" name="position_long" value="'.$position_long_d.'">
+			<input type ="hidden" name="recdate_d" value="'.$recdate_d.'">
+		
+		<table width=100%>
+			<colgroup>
+				<col style="width: 25%"><col style="width: 25%"><col style="width: 25%"><col style="width: 25%">
+			</colgroup>
+			<tr><td style="text-align:right;"><b>폴리곤 : </b></td><td style="text-align:left;" colspan=3><b>'.$polID.'</b></td></tr>
+			<tr><td style="text-align:right;">기존 조사자 : </td><td style="text-align:left;" colspan=3><b>'.$surveyer_old.'</b></td></tr>
+			<tr><td style="text-align:right;"><b>신규 조사자 : </b></td><td style="text-align:left;" colspan=3><b>'.$surveyer_d.'</b></td></tr>
+			<tr><td style="text-align:right;"><b>조사일자 : </b></td><td style="text-align:left;" colspan=3>'.$recdate_d.'</td></tr>
+			<tr><td style="text-align:right;"><b>위경도 : </b></td><td style="text-align:left;">'.$position_lat_d.'</td>
+				<td style="text-align:left;" colspan=2>'.$position_long_d.'</td></tr>
+		</table>
+		<hr>
+		<table width=100%>
+			<colgroup>
+				<col style="width: 45%"><col style="width: 55%">
+			</colgroup>
+			<tr><td style="text-align:right;"><b>울폐도 : </b></td><td style="text-align:left;"><input type ="text" size = "14" id="crown_density" value="'.$crown_density.'" list="crown_density_List"></td></tr>
+			<tr><td style="text-align:right;"><b>임업흔적 : </b></td><td style="text-align:left;"><input type ="text" size = "14" id="for_man_evi" value="'.$for_man_evi.'" list="for_man_evi_List"></td></tr>
+			<tr><td style="text-align:right;"><b>산림구분 : </b></td><td style="text-align:left;"><input type ="text" size = "14" id="forest_type" value="'.$forest_type.'" list="forest_type_List"></td></tr>
+			<tr><td style="text-align:right;"><b>인간이용 : </b></td><td style="text-align:left;"><input type ="text" size = "14" id="human_usage" value="'.$human_usage.'" list="human_usage_List"></td></tr>
+			<tr><td style="text-align:right;"><b>고사목</b>(그루) : </td><td style="text-align:left;"><input type ="text" size = "14" id="dead_tree_no" value="'.$dead_tree_no.'"></td></tr>
+			<tr><td style="text-align:right;">(수종) : </td><td style="text-align:left;"><input type ="text" size = "14" id="dead_tree" value="'.$dead_tree.'" list="treeList"></td></tr>
+			<tr><td style="text-align:right;"><b>병해충 : </b></td><td style="text-align:left;"><input type ="text" size = "14" id="pest" value="'.$pest.'" list="pest_List"></td></tr>
+			<tr><td style="text-align:right;"><b>미소서식지 : </b></td><td style="text-align:left;"><input type ="text" size = "14" id="micro_habitat" value="'.$micro_habitat.'" list="micro_habitat_List"></td></tr>
+			<tr><td style="text-align:right;"><b>계류현황 : </b></td><td style="text-align:left;"><input type ="text" size = "14" id="stream_status" value="'.$stream_status.'" list="stream_status_List"></td></tr>
+			<tr><td style="text-align:right;"><b>산림습지 : </b></td><td style="text-align:left;"><input type ="text" size = "14" id="forest_wetland" value="'.$forest_wetland.'" list="forest_wetland_List"></td></tr>
+			<tr><td style="text-align:right;"><b>토양수분 : </b></td><td style="text-align:left;"><input type ="text" size = "14" id="soil_humidity" value="'.$soil_humidity.'" list="soil_humidity_List"></td></tr>
+			<tr><td style="text-align:right;"><b>일반사항</b> 암석노출 :</td><td style="text-align:left;"><input type ="text" size = "14" id="rock_ratio" value="'.$rock_ratio.'" list="coverage_List"> %</td></tr>
+			<tr><td style="text-align:right;">경사 :</td><td style="text-align:left;"><input type ="text" size = "14" id="slope" value="'.$slope.'"> °</td></tr>
+			<tr><td style="text-align:right;">낙엽부식층 :</td><td style="text-align:left;"><input type ="text" size = "14" id="litter_layer" value="'.$litter_layer.'"> cm</td></tr>
+			<tr><td style="text-align:right;"><b>표토토성 : </b></td><td style="text-align:left;"><input type ="text" size = "14" id="soil_cha" value="'.$soil_cha.'" list="soil_cha_List"></td></tr>
+		</table>
+		<hr>
+		<table width=100%>
+			<colgroup>
+				<col style="width: 45%"><col style="width: 55%">
+			</colgroup>
+			<tr><td style="text-align:right;"><b>조사경계수정 : </b></td><td style="text-align:left;"><input type ="text" size = "14" id="boundary_edit" value="'.$boundary_edit.'" list="boundary_edit_List"></td></tr>
+			<tr><td style="text-align:right;"><b>조사불가능 : </b></td><td style="text-align:left;"><input type ="text" size = "14" id="not_investigatable" value="'.$not_investigatable.'" list="not_investigatable_List"></td></tr>
+			<tr><td style="text-align:right;"><b>잠재자연식생 </b></br>(우선순) : </td><td style="text-align:left;"><input type ="text" size = "14" id="potential_forest" value="'.$potential_forest.'"></td></tr>
+			<tr><td style="text-align:right;"><b>특이사항 : </b></br>(동물흔적, 노거수 등) </td><td style="text-align:left;"><input type ="text" size = "14" id="note_ani" value="'.$note_ani.'" list="note_ani_List"></td></tr>
+			<tr><td style="text-align:right;"><b>우수비오톱</br>선정 가능성 : </b></td><td style="text-align:left;"><input type ="text" size = "14" id="posib_prominant_biotope" value="'.$posib_prominant_biotope.'"></td></tr>
+		</table>
+	<hr></br>
+	<table width=100%>
+			<tr><td style="text-align:left;" colspan=4><b>교목층</b></td></tr>
+			<tr><td style="text-align:right;">평균수고 : </td><td style="text-align:left;"><input type ="text" size = "5" id="tree_height" value="'.$tree_height.'" m</td>
+			  <td style="text-align:right;">식피율 : </td><td style="text-align:left;"><input type ="text" size = "5" id="tree_coverage" value="'.$tree_coverage.'" list="coverage_List"> %</td></tr>
+		</table>
+	<hr>	
+		<table width=100%>
+		<thead>
+		<tr><td rowspan=2>종명</td><td rowspan=2>식피율</br>(%)</td><td rowspan=2>고립</td><td colspan=3>DBH(cm)</td></tr>
+		<tr><td>최대</td><td>평균</td><td>최소</td><td rowspan=2>선택</td></tr>
+		</thead>
+		<tbody id="tree_table">';
+	//비오톱 층위별 정보 조회
+	$query_pg2 = "SELECT * FROM survey_result_detail WHERE polygonid='$polID' and layer='교목층'";
+	$result_pg2 = pg_query($conn_pg, $query_pg2)or die("DB 조회에 실패했습니다.");
+	//DB 조회결과 파싱
+	while( $row1 = pg_fetch_array( $result_pg2 ) ) {
+	$species=$row1["species"];
+	$coverage=$row1["coverage"];
+	$isolated=$row1["isolated"];
+	$dbh_max=$row1["dbh_max"];
+	$dbh_avr=$row1["dbh_avr"];
+	$dbh_min=$row1["dbh_min"];
+	echo '<tr><td><input type ="text" size="5" id="species" value="'.$species.'" list="treeList"></td>
+			<td><input type ="text" size="2" id="coverage" value="'.$coverage.'" list="coverage_List"></td>
+			<td><input type="checkbox" id="isolated" value="'.$isolated.'"></td>
+			<td><input type ="text" size="1" id="dbh_max" value="'.$dbh_max.'" list="dbh_List"></td>
+			<td><input type ="text" size="1" id="dbh_avr" value="'.$dbh_avr.'" list="dbh_List"></td>
+			<td><input type ="text" size="1" id="dbh_min" value="'.$dbh_min.'" list="dbh_List"></td>
+			<td><input type="checkbox" id="select" id="select" value="선택"></td>	
+		</tr>;'
+	}
+	echo "<script>add_tree1(tree_table);</script>";
+	echo '</tbody>
+		<tr><td colspan=3><input type ="button" id="add_tree" value="교목 추가" onclick="add_tree1(tree_table)"></td><td></td>
+			<td colspan=3><input type ="button" id="del_tree" value="선택 삭제" onclick="del_tree1(tree_table)"></td><tr>
+		</table>
+		
+	<hr></br>
+		<table width=100%>
+			<tr><td style="text-align:left;" colspan=4><b>아교목층</b></td></tr>
+			<tr><td style="text-align:right;">평균수고 : </td><td style="text-align:left;"><input type ="text" size = "5" id="subtree_height" value="'.$subtree_height.'" m</td>
+			  <td style="text-align:right;">식피율 : </td><td style="text-align:left;"><input type ="text" size = "5" id="subtree_coverage" value="'.$subtree_coverage.'" list="coverage_List"> %</td></tr>
+		</table>
+	<hr>	
+		<table width=100%>
+		<thead>
+		<tr><td rowspan=2>종명</td><td rowspan=2>식피율</br>(%)</td><td rowspan=2>고립</td><td colspan=3>DBH(cm)</td></tr>
+		<tr><td>최대</td><td>평균</td><td>최소</td><td rowspan=2>"선택"</td></tr>
+		</thead>
+		<tbody id="subtree_table">
+	
+		<tr><td colspan=2><input type ="button" id="add_herb" value="초본 추가" onclick="add_tree2(herb_table)"></td>
+			<td colspan=2><input type ="button" id="del_herb" value="선택 삭제" onclick="del_tree1(herb_table)"></td><tr>
+		</table>
+	<hr></br>
+		<table width=100%>
+				<tr><td><input type ="submit" value="저장"></td><td></td>
+				<td><input type=button id="cancle" value="취소" onClick="closewin()"></td></tr>			
+		</table>
+		
+<datalist id="treeList">
+		<option value="갈참나무"></option>
+ 		<option value="고로쇠나무"></option>
+		<option value="굴참나무"></option>
+		<option value="낙우송"></option>
+		<option value="떡갈나무"></option>
+		<option value="리기다소나무"></option>
+		<option value="메타세쿼이아"></option>
+		<option value="물박달나무"></option>
+		<option value="물오리나무"></option>
+		<option value="물푸레나무"></option>
+		<option value="밤나무"></option>
+ 		<option value="백합나무"></option>
+		<option value="상수리나무"></option>
+		<option value="소나무"></option>
+		<option value="신갈나무"></option>
+		<option value="스트로브잣나무"></option>
+		<option value="아까시나무"></option>
+		<option value="은사시나무"></option>
+		<option value="은행나무"></option>
+		<option value="일본잎갈나무"></option>
+ 		<option value="자작나무"></option>
+		<option value="잔털벚나무"></option>
+		<option value="잣나무"></option>
+		<option value="졸참나무"></option>
+		<option value="팥배나무"></option>
+		<option value="편백나무"></option>
+</datalist>
+<datalist id="shrubList">
+		<option value="가막살나무"></option>
+		<option value="갈참나무"></option>
+		<option value="개다래"></option>
+		<option value="개암나무"></option>
+		<option value="개옻나무"></option>
+		<option value="갯버들"></option>
+		<option value="광대싸리"></option>
+		<option value="국수나무"></option>
+		<option value="굴참나무"></option>
+		<option value="난티잎개암나무"></option>
+		<option value="노간주나무"></option>
+		<option value="노린재나무"></option>
+		<option value="누리장나무"></option>
+		<option value="다래"></option>
+		<option value="담쟁이덩굴"></option>
+		<option value="당단풍나무"></option>
+		<option value="두릅나무"></option>
+		<option value="때죽나무"></option>
+		<option value="떡갈나무"></option>
+		<option value="매화말발도리"></option>
+		<option value="멍석딸기"></option>
+		<option value="물푸레나무"></option>
+		<option value="미역줄나무"></option>
+		<option value="밤나무"></option>
+		<option value="붉나무"></option>
+		<option value="사위질빵"></option>
+		<option value="산딸기"></option>
+		<option value="산초나무"></option>
+		<option value="상수리나무"></option>
+		<option value="생강나무"></option>
+		<option value="소나무"></option>
+		<option value="스트로브잣나무"></option>
+		<option value="신갈나무"></option>
+		<option value="싸리"></option>
+		<option value="아까시나무"></option>
+		<option value="왕머루"></option>
+		<option value="으름덩굴"></option>
+		<option value="일본목련"></option>
+		<option value="작살나무"></option>
+		<option value="잣나무"></option>
+		<option value="조록싸리"></option>
+		<option value="졸참나무"></option>
+		<option value="좀작살나무"></option>
+		<option value="줄딸기"></option>
+		<option value="쥐똥나무"></option>
+		<option value="진달래"></option>
+		<option value="쪽동백나무"></option>
+		<option value="찔레나무"></option>
+		<option value="참싸리"></option>
+		<option value="철쭉"></option>
+		<option value="청가시덩굴"></option>
+		<option value="청미래덩굴"></option>
+		<option value="초피나무"></option>
+		<option value="팥배나무"></option>
+		<option value="화살나무"></option>
+		<option value="회나무"></option>
+</datalist>
+<datalist id="herbList">
+		<option value="가막살나무"></option>
+		<option value="갈참나무"></option>
+</datalist>
+<datalist id="otherCatList">
+		<option value="묘지"></option>
+		<option value="벌채지"></option>
+		<option value="자연나지(강기슭)"></option>
+		<option value="자연나지(암벽,바위)"></option>
+		<option value="인공나지"></option>
+		<option value="농경지(논)"></option>
+		<option value="농경지(밭)"></option>
+		<option value="농경지(시설경작지)"></option>
+		<option value="농경지(과수원)"></option>
+		<option value="농경지(묘포장)"></option>
+		<option value="농경지(목장,양식장)"></option>
+		<option value="농경지(기타재배지)"></option>
+		<option value="관목()"></option>
+		<option value="인공초지(잔디식재지)"></option>
+		<option value="인공초지(원예종초지)"></option>
+		<option value="인공초지(귀화종초지)"></option>
+		<option value="하천"></option>
+		<option value="호소"></option>
+		<option value="주거지"></option>
+		<option value="초지"></option>
+		<option value="경계수정필요()"></option>
+</datalist>
+<datalist id="ratioList1">
+  <option value="100"></option>
+	<option value="90"></option>
+	<option value="80"></option>
+	<option value="70"></option>
+	<option value="60"></option>
+	<option value="50"></option>
+	<option value="40"></option>
+	<option value="30"></option>
+</datalist>
+<datalist id="ratioList2">
+	<option value="50"></option>
+	<option value="40"></option>
+	<option value="30"></option>
+	<option value="20"></option>
+	<option value="10"></option>
+</datalist>
+<datalist id="ratioList3">
+	<option value="30"></option>
+	<option value="20"></option>
+	<option value="10"></option>
+</datalist>
+</datalist>
+<datalist id="crown_density_List">
+	<option value="100-90%"></option>
+	<option value="90-80%"></option>
+	<option value="80-60%"></option>
+	<option value="40-60%"></option>
+	<option value="40%미만"></option>
+</datalist>
+<datalist id="for_man_evi_List">
+	<option value="관목정리"></option>
+	<option value="간벌"></option>
+	<option value="개벌(벌채지)"></option>
+	<option value="간벌 후 방치"></option>
+	<option value="없음"></option>
+</datalist>
+<datalist id="coverage_List">
+	<option value="100"></option>
+	<option value="90"></option>
+	<option value="80"></option>
+	<option value="70"></option>
+	<option value="60"></option>
+	<option value="50"></option>
+	<option value="40"></option>
+	<option value="30"></option>
+	<option value="20"></option>
+	<option value="10"></option>
+	<option value="5"></option>
+	<option value="0"></option>
+</datalist>
+<datalist id="forest_type_List">
+	<option value="조림지"></option>
+	<option value="이차림"></option>
+	<option value="자연림"></option>
+</datalist>
+<datalist id="human_usage_List">
+	<option value="일반등산로(나지)"></option>
+	<option value="시설등산로(토양포장 등)"></option>
+	<option value="운동 및 휴게시설"></option>
+	<option value="없음"></option>
+</datalist>
+<datalist id="pest_List">
+	<option value="병해충발생 없음"></option>
+	<option value="병해충발생 있음(대응사업 x)"></option>
+	<option value="병해충발생 있음(대응사업 o)"></option>
+</datalist>
+<datalist id="micro_habitat_List">
+	<option value="용소"></option>
+	<option value="용출"></option>
+	<option value="사방댐"></option>
+	<option value="전석지"></option>
+	<option value="해당없음"></option>
+</datalist>
+<datalist id="stream_status_List">
+	<option value="건천"></option>
+	<option value="계류 폭 ( )m"></option>
+	<option value="호습성 식생 발달"></option>
+	<option value="해당없음"></option>
+</datalist>
+<datalist id="forest_wetland_List">
+	<option value="묵논"></option>
+	<option value="묵밭"></option>
+	<option value="산지습지"></option>
+	<option value="해당 없음"></option>
+</datalist>
+<datalist id="soil_humidity_List">
+	<option value="과습"></option>
+	<option value="약습"></option>
+	<option value="중용"></option>
+	<option value="약건"></option>
+	<option value="과건"></option>
+</datalist>
+<datalist id="soil_cha_List">
+	<option value="사토"></option>
+	<option value="사질토"></option>
+	<option value="양토"></option>
+</datalist>
+<datalist id="boundary_edit_List">
+	<option value="분리"></option>
+	<option value="재작성"></option>
+	<option value="병합(  )"></option>
+</datalist>
+<datalist id="not_investigatable_List">
+	<option value="군사시설"></option>
+	<option value="군사지역"></option>
+	<option value="보안시설"></option>
+	<option value="사유지"></option>
+	<option value="위험지역"></option>
+</datalist>
+<datalist id="note_ani_List">
+	<option value="분변(고라니)"></option>
+	<option value="분변(멧돼지)"></option>
+	<option value="분변(수달)"></option>
+	<option value="분변(  )"></option>
+	<option value="족적(  )"></option>
+	<option value="울음소리(  )"></option>
+	<option value="직접관찰 성체(  )"></option>
+	<option value="직접관찰 유생(  )"></option>
+	<option value="직접관찰 알(  )"></option>
+	<option value="노거수(  )"></option>
+</datalist>
+<datalist id="dbh_List">
+	<option value="40"></option>
+	<option value="35"></option>
+	<option value="30"></option>
+	<option value="25"></option>
+	<option value="20"></option>
+	<option value="18"></option>
+	<option value="15"></option>
+	<option value="13"></option>
+	<option value="11"></option>
+	<option value="10"></option>
+	<option value="9"></option>
+	<option value="8"></option>
+	<option value="7"></option>
+	<option value="6"></option>
+	<option value="5"></option>
+	<option value="4"></option>
+	<option value="3"></option>
+</datalist>
+			</form>';
 
-</body> 
-</html>
+ ?>
+ <script>
+//행 추가/삭제
+function add_tree1(tbody_name){
+	switch (tbody_name) {
+		case tree_table : var species_list='treeList'; break;
+		case subtree_table : var species_list='treeList'; break;
+	}
+	var objrow = tbody_name.insertRow(tbody_name.rows.length);
+	var objcell_species=objrow.insertCell();
+	var objcell_coverage=objrow.insertCell();
+	var objcell_isolated=objrow.insertCell();
+	var objcell_dbh_max=objrow.insertCell();
+	var objcell_dbh_avr=objrow.insertCell();
+	var objcell_dbh_min=objrow.insertCell();
+	var objcell_del=objrow.insertCell();
+	objcell_species.innerHTML = "<input type ='text' size='5' id='species' value='' list='" + species_list + "'>";
+	objcell_coverage.innerHTML = "<input type ='text' size='2' id='coverage' value=''.$coverage.'' list='coverage_List'>";
+	objcell_isolated.innerHTML = "<input type='checkbox' id='isolated' value='고립'>";
+	objcell_dbh_max.innerHTML = "<input type ='text' size='1' id='dbh_max' value=''.$dbh_max.'' list='dbh_List'>";
+	objcell_dbh_avr.innerHTML = "<input type ='text' size='1' id='dbh_avr' value=''.$dbh_avr.'' list='dbh_List'>";
+	objcell_dbh_min.innerHTML = "<input type ='text' size='1' id='dbh_min' value=''.$dbh_min.'' list='dbh_List'>";
+	objcell_del.innerHTML = "<input type='checkbox' id='select' value='선택'>";	
+}
+function add_tree2(tbody_name){
+	switch (tbody_name) {
+		case shrub_table : var species_list='shrubList';  break;
+		case herb_table : var species_list='herbList'; break; 
+	}
+	var objrow = tbody_name.insertRow(tbody_name.rows.length);
+	var objcell_species=objrow.insertCell();
+	var objcell_coverage=objrow.insertCell();
+	var objcell_isolated=objrow.insertCell();
+	var objcell_del=objrow.insertCell();
+	objcell_species.innerHTML = "<input type ='text' size = '10' id='species' value='' list='" + species_list + "'>";
+	objcell_coverage.innerHTML = "<input type ='text' size = '2' id='coverage' value=''.$coverage.'' list='coverage_List'>";
+	objcell_isolated.innerHTML = "<input type='checkbox' id='isolated' value='고립'>";
+	objcell_del.innerHTML = "<input type='checkbox' id='select' value='선택'>";	
+}
+function del_tree1(tbody_name){
+	switch (tbody_name) {
+		case tree_table: var select_row='6'; break;
+		case subtree_table: var select_row='6'; break;
+		case shrub_table: var select_row='3'; break;
+		case herb_table: var select_row='3'; break; 
+	}
+	for(var i=0; i<tbody_name.rows.length; i++){
+		var select = tbody_name.rows[i].cells[select_row].childNodes[0].checked;
+		if(select){
+			tbody_name.deleteRow(i);
+			i--;
+		}
+	}
+}
+
+//창닫기
+function closewin(){
+  window.close();
+}
+ </script>
+ </article>
+ </H7>
+<script>
+//사진 관련
+var polIDjpg = '<?= $polID ?>'+ '.jpg';
+var captureimage = document.getElementById('camera');
+var fileList;
+captureimage.addEventListener('change', (e) => {
+fileList = e.target.files;
+downloadFiles(polIDjpg, 'image/*');
+});
+
+function downloadFiles(file_name, file_type) {
+  var file = new Blob(fileList, {type: file_type});
+  if (window.navigator.msSaveOrOpenBlob) 
+    window.navigator.msSaveOrOpenBlob(file, file_name);
+  else { 
+    var a = document.createElement("a"),
+        url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = file_name;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url); 
+    }, 0); 
+  }
+}
+</script>
+</body>
