@@ -204,13 +204,9 @@ function recordInfo(){
     //기록 시간 받기
     var time= new Date(); //시간받기위해서 new date
     var month = time.getMonth()+1;
-    //document.getElementById("recdate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
     document.formA.recdate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
     //관측지점 받기
-    navigator.geolocation.getCurrentPosition(success1, error1, options1)
     function success1(position) {
-        //document.getElementById("position_lat").innerHTML=position.coords.latitude;
-        //document.getElementById("position_long").innerHTML=position.coords.longitude;
         document.formA.position_lat.value = position.coords.latitude;
         document.formA.position_long.value = position.coords.longitude;
     }
@@ -222,6 +218,7 @@ function recordInfo(){
         maximumAge: 3000,
         timeout: 10000
     };
+    navigator.geolocation.getCurrentPosition(success1, error1, options1)
 }
 //기록용 정보 받기(생태계교란종)
 function recordInfo2(){
@@ -231,10 +228,8 @@ function recordInfo2(){
     //기록 시간 받기
     var time= new Date(); //시간받기위해서 new date
     var month = time.getMonth()+1;
-    //document.getElementById("recdate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
     document.formB.recdate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
     //관측지점 받기
-    navigator.geolocation.getCurrentPosition(success2, error2, options2)
     function success2(position) {
         //document.getElementById("position_lat").innerHTML=position.coords.latitude;
         //document.getElementById("position_long").innerHTML=position.coords.longitude;
@@ -249,6 +244,7 @@ function recordInfo2(){
         maximumAge: 3000,
         timeout: 10000
     };
+    navigator.geolocation.getCurrentPosition(success2, error2, options2)
 }
 // 현재위치 추적 시작-끄기
 var options = {
@@ -403,13 +399,10 @@ function displayArea(polygonPaths) {
         var time= new Date(); //시간받기위해서 new date
         var month = time.getMonth()+1;
         document.getElementById("recdate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
-        //document.formA.recdate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
         //관측지점 받기
         function success4(position) {
           document.getElementById("position_lat").innerHTML=position.coords.latitude;
           document.getElementById("position_long").innerHTML=position.coords.longitude;
-          //document.formA.position_lat.value = position.coords.latitude;
-          //document.formA.position_long.value = position.coords.longitude;
         }
         function error4() {
             alert('현재 위치를 알 수 없습니다');
