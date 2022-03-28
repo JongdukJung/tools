@@ -215,7 +215,7 @@ function recordInfo(){
     }
     var options1 = {
         enableHighAccuracy: true,
-        maximumAge: 3000,
+        maximumAge: 1000,
         timeout: 10000
     }
     navigator.geolocation.getCurrentPosition(success1, error1, options1);
@@ -241,7 +241,7 @@ function recordInfo2(){
     }
     var options2 = {
         enableHighAccuracy: true,
-        maximumAge: 3000,
+        maximumAge: 1000,
         timeout: 10000
     }
     navigator.geolocation.getCurrentPosition(success2, error2, options2);
@@ -317,7 +317,7 @@ function movePosition(){
     }
     var options3 = {
         enableHighAccuracy: true,
-        maximumAge: 3000,
+        maximumAge: 1000,
         timeout: 1000
     };
 }
@@ -409,7 +409,7 @@ function displayArea(polygonPaths) {
         }
         var options4 = {
             enableHighAccuracy: true,
-            maximumAge: 3000,
+            maximumAge: 1000,
             timeout: 10000
         };
         navigator.geolocation.getCurrentPosition(success4, error4, options4);
