@@ -209,6 +209,9 @@ function recordInfo(){
     function success1(position) {
         document.formA.position_lat.value = position.coords.latitude;
         document.formA.position_long.value = position.coords.longitude;
+        if(!document.formA.position_lat.value){
+            alert('현재 위치를 알 수 없습니다');    
+        }
     }
     function error1() {
         alert('현재 위치를 알 수 없습니다');
@@ -235,6 +238,9 @@ function recordInfo2(){
         //document.getElementById("position_long").innerHTML=position.coords.longitude;
         document.formB.position_lat.value = position.coords.latitude;
         document.formB.position_long.value = position.coords.longitude;
+        if(!document.formB.position_lat.value){
+            alert('현재 위치를 알 수 없습니다');    
+        }
     }
     function error2() {
         alert('현재 위치를 알 수 없습니다');
