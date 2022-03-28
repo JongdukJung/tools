@@ -207,17 +207,17 @@ function recordInfo(){
     //document.getElementById("recdate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
     document.formA.recdate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
     //관측지점 받기
-    navigator.geolocation.getCurrentPosition(success2, error2, options2)
-    function success2(position) {
+    navigator.geolocation.getCurrentPosition(success1, error1, options1)
+    function success1(position) {
         //document.getElementById("position_lat").innerHTML=position.coords.latitude;
         //document.getElementById("position_long").innerHTML=position.coords.longitude;
         document.formA.position_lat.value = position.coords.latitude;
         document.formA.position_long.value = position.coords.longitude;
     }
-    function error2() {
+    function error1() {
         alert('현재 위치를 알 수 없습니다');
     }
-    var options2 = {
+    var options1 = {
         enableHighAccuracy: true,
         maximumAge: 30000,
         timeout: 10000
@@ -310,16 +310,16 @@ function displayMarker(locPosition, alpha) {
 // 마커 표시하고 센터 이동하기-현재위치
 function movePosition(){
     var locPosition;
-    navigator.geolocation.getCurrentPosition(success2, error2, options2)
-    function success2(position) {
+    navigator.geolocation.getCurrentPosition(success3, error3, options3)
+    function success3(position) {
         var lat = position.coords.latitude, lon = position.coords.longitude
         locPosition = new kakao.maps.LatLng(lat, lon);
         displayMarker2(locPosition);
     }
-    function error2() {
+    function error3() {
         alert('현재 위치를 알 수 없습니다');
     }
-    var options2 = {
+    var options3 = {
         enableHighAccuracy: true,
         maximumAge: 3000,
         timeout: 1000
@@ -405,21 +405,21 @@ function displayArea(polygonPaths) {
         document.getElementById("recdate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
         //document.formA.recdate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
         //관측지점 받기
-        function success2(position) {
+        function success4(position) {
           document.getElementById("position_lat").innerHTML=position.coords.latitude;
           document.getElementById("position_long").innerHTML=position.coords.longitude;
           //document.formA.position_lat.value = position.coords.latitude;
           //document.formA.position_long.value = position.coords.longitude;
         }
-        function error2() {
+        function error4() {
             alert('현재 위치를 알 수 없습니다');
         }
-        var options2 = {
+        var options4 = {
             enableHighAccuracy: true,
             maximumAge: 30000,
             timeout: 10000
         };
-        navigator.geolocation.getCurrentPosition(success2, error2, options2)
+        navigator.geolocation.getCurrentPosition(success4, error4, options4)
         //활성화된 폴리곤 지우기위해 저장
         pastpolygon=polygon;
     });
