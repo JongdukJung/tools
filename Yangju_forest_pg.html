@@ -219,7 +219,7 @@ function recordInfo(){
     }
     var options1 = {
         enableHighAccuracy: true,
-        maximumAge: 30000,
+        maximumAge: 3000,
         timeout: 10000
     };
 }
@@ -246,14 +246,14 @@ function recordInfo2(){
     }
     var options2 = {
         enableHighAccuracy: true,
-        maximumAge: 30000,
+        maximumAge: 3000,
         timeout: 10000
     };
 }
 // 현재위치 추적 시작-끄기
 var options = {
   enableHighAccuracy: true,
-  timeout: 100,
+  timeout: 1000,
   maximumAge: 0
 };
 var tracing = false;
@@ -416,7 +416,7 @@ function displayArea(polygonPaths) {
         }
         var options4 = {
             enableHighAccuracy: true,
-            maximumAge: 30000,
+            maximumAge: 3000,
             timeout: 10000
         };
         navigator.geolocation.getCurrentPosition(success4, error4, options4)
