@@ -218,7 +218,7 @@ function recordInfo(){
         maximumAge: 1000,
         timeout: 10000
     }
-    navigator.geolocation.getCurrentPosition(success1, error1, options1);
+    const positionXY = navigator.geolocation.getCurrentPosition(success1, error1, options1);
 }
 //기록용 정보 받기(생태계교란종)
 function recordInfo2(){
@@ -244,7 +244,7 @@ function recordInfo2(){
         maximumAge: 1000,
         timeout: 10000
     }
-    navigator.geolocation.getCurrentPosition(success2, error2, options2);
+    const positionXY = navigator.geolocation.getCurrentPosition(success2, error2, options2);
 }
 // 현재위치 추적 시작-끄기
 var options = {
@@ -306,7 +306,7 @@ function displayMarker(locPosition, alpha) {
 // 마커 표시하고 센터 이동하기-현재위치
 function movePosition(){
     var locPosition;
-    navigator.geolocation.getCurrentPosition(success3, error3, options3);
+    const positionXY = navigator.geolocation.getCurrentPosition(success3, error3, options3);
     function success3(position) {
         var lat = position.coords.latitude, lon = position.coords.longitude
         locPosition = new kakao.maps.LatLng(lat, lon);
@@ -412,7 +412,7 @@ function displayArea(polygonPaths) {
             maximumAge: 1000,
             timeout: 10000
         };
-        navigator.geolocation.getCurrentPosition(success4, error4, options4);
+        const positionXY = navigator.geolocation.getCurrentPosition(success4, error4, options4);
         //활성화된 폴리곤 지우기위해 저장
         pastpolygon=polygon;
     });
