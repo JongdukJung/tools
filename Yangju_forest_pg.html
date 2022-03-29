@@ -194,7 +194,7 @@ function new_window_biotope(){
     var options1 = {
         enableHighAccuracy: true,
         maximumAge: 1000,
-        timeout: 10000
+        timeout: 3000
     }
     const positionXY = navigator.geolocation.getCurrentPosition(success1, error1, options1);
 }
@@ -232,7 +232,7 @@ function new_window_invasive(){
     var options2 = {
         enableHighAccuracy: true,
         maximumAge: 1000,
-        timeout: 1000
+        timeout: 3000
     }
     navigator.geolocation.getCurrentPosition(success2, error2, options2);
 }
@@ -240,8 +240,8 @@ function new_window_invasive(){
 // 현재위치 추적 시작-끄기
 var options = {
   enableHighAccuracy: true,
-  timeout: 1000,
-  maximumAge: 0
+  timeout: 3000,
+  maximumAge: 1000
 }
 var tracing = false;
 var watchid;
