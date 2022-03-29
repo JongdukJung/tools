@@ -50,7 +50,6 @@
 </form></td></tr></table>
 </h6>
 <script>
-   
 //==============================================================================================
 //FUNCTION
 //==============================================================================================
@@ -159,45 +158,7 @@ case '37705021' : var mapCenter = new kakao.maps.LatLng(37.6875, 127.0125); var 
 
 //기록창 띄우기(비오톱)
 function new_window_biotope(){
-    if(!document.formA.polID.value){
-       alert('먼저 폴리곤을 선택해 주세요');}
-    else{
-        recordInfo();
-        if(!document.formA.surveyer_new.value){
-            alert('조사자를 입력해 주세요=조사자1, 조사자2...');}
-        else{
-            var objPopup = window.open('','myWindow');
-            document.formA.target="myWindow";      // 타켓
-            document.formA.action="http://221.143.128.201:999/Yangju/record_pg.html";       // 수행할 경로
-            if ( objPopup == null){                                  // 팝업이 뜨는지 확인
-                alert('차단된 팝업창을 허용해 주세요');}
-            else{
-                document.formA.submit();
-                objPopup.focus();
-            }
-        }
-    }
-}
-//기록창 띄우기(생태계교란종)
-function new_window_invasive(){
-    recordInfo2();
-    if(!document.formB.surveyer_new.value){
-        alert('조사자를 입력해 주세요=조사자1, 조사자2...');}
-    else{
-        var objPopup = window.open('','myWindow');
-        document.formB.target="myWindow";      // 타켓
-        document.formB.action="http://221.143.128.201:999/Yangju/record_invasive_pg.html";       // 수행할 경로
-        if ( objPopup == null){                                  // 팝업이 뜨는지 확인
-            alert('차단된 팝업창을 허용해 주세요');}
-        else{
-            document.formB.submit();
-            objPopup.focus();
-        }
-    }
-}
-
 //기록용 정보 받기(비오톱)
-function recordInfo(){
     //조사자 입력 값 받기
     const surveyers = document.getElementById("surveyers").value;
     document.formA.surveyer_new.value = surveyers;
@@ -209,8 +170,22 @@ function recordInfo(){
     function success1(position) {
         document.formA.position_lat.value = position.coords.latitude;
         document.formA.position_long.value = position.coords.longitude;
-        if(!document.formA.position_lat.value){
-            alert('현재 위치를 알 수 없습니다');    
+        if(!document.formA.polID.value){
+           alert('먼저 폴리곤을 선택해 주세요');}
+        else{
+           if(!document.formA.surveyer_new.value){
+           alert('조사자를 입력해 주세요=조사자1, 조사자2...');}
+            else{
+                var objPopup = window.open('','myWindow');
+                document.formA.target="myWindow";      // 타켓
+                document.formA.action="http://221.143.128.201:999/Yangju/record_pg.html";       // 수행할 경로
+                if ( objPopup == null){                                  // 팝업이 뜨는지 확인
+                    alert('차단된 팝업창을 허용해 주세요');}
+                else{
+                    document.formA.submit();
+                    objPopup.focus();
+                }
+            }
         }
     }
     function error1() {
@@ -223,8 +198,9 @@ function recordInfo(){
     }
     const positionXY = navigator.geolocation.getCurrentPosition(success1, error1, options1);
 }
+//기록창 띄우기(생태계교란종)
+function new_window_invasive(){
 //기록용 정보 받기(생태계교란종)
-function recordInfo2(){
     //조사자 입력 값 받기
     const surveyers = document.getElementById("surveyers").value;
     document.formB.surveyer_new.value = surveyers;
@@ -234,12 +210,20 @@ function recordInfo2(){
     document.formB.recdate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
     //관측지점 받기
     function success2(position) {
-        //document.getElementById("position_lat").innerHTML=position.coords.latitude;
-        //document.getElementById("position_long").innerHTML=position.coords.longitude;
         document.formB.position_lat.value = position.coords.latitude;
         document.formB.position_long.value = position.coords.longitude;
-        if(!document.formB.position_lat.value){
-            alert('현재 위치를 알 수 없습니다');    
+        if(!document.formB.surveyer_new.value){
+           alert('조사자를 입력해 주세요=조사자1, 조사자2...');}
+        else{
+            var objPopup = window.open('','myWindow');
+            document.formB.target="myWindow";      // 타켓
+            document.formB.action="http://221.143.128.201:999/Yangju/record_invasive_pg.html";       // 수행할 경로
+            if ( objPopup == null){                                  // 팝업이 뜨는지 확인
+                alert('차단된 팝업창을 허용해 주세요');}
+            else{
+                document.formB.submit();
+                objPopup.focus();
+            }
         }
     }
     function error2() {
@@ -248,10 +232,11 @@ function recordInfo2(){
     var options2 = {
         enableHighAccuracy: true,
         maximumAge: 1000,
-        timeout: 10000
+        timeout: 1000
     }
-    const positionXY = navigator.geolocation.getCurrentPosition(success2, error2, options2);
+    navigator.geolocation.getCurrentPosition(success2, error2, options2);
 }
+
 // 현재위치 추적 시작-끄기
 var options = {
   enableHighAccuracy: true,
