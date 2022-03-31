@@ -92,6 +92,8 @@ function Request(){
 
 // 조사구역에 따른 자료파일 설정
 switch (mapID){
+case '00000001' : var mapCenter = new kakao.maps.LatLng(37.9125, 126.9625); var polygonFile ='./data/Yangju/polygon01.txt'; var polygonCenterFile='./data/Yangju/polygonCenter01.txt'; break;
+case '00000002' : var mapCenter = new kakao.maps.LatLng(37.9125, 126.9625); var polygonFile ='./data/Yangju/polygon01.txt'; var polygonCenterFile='./data/Yangju/polygonCenter01.txt'; break;
 case '37604039' : var mapCenter = new kakao.maps.LatLng(37.9125, 126.9625); var polygonFile ='./data/Yangju/polygon01.txt'; var polygonCenterFile='./data/Yangju/polygonCenter01.txt'; break;
 case '37604030' : var mapCenter = new kakao.maps.LatLng(37.9375, 126.9875); var polygonFile ='./data/Yangju/polygon02.txt'; var polygonCenterFile='./data/Yangju/polygonCenter02.txt'; break;
 case '37604040' : var mapCenter = new kakao.maps.LatLng(37.9125, 126.9875); var polygonFile ='./data/Yangju/polygon02.txt'; var polygonCenterFile='./data/Yangju/polygonCenter02.txt'; break;
