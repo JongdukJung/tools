@@ -14,6 +14,13 @@
 <head>
     <meta charset="utf-8">
     <title>양주시 산림 조사</title>
+    <form name="formC" method="post" action="">
+        조사 통계 보기 : <input type="button" name="map_id_b" value="" onclick="map_stat()"/>
+        <input type="hidden" name="map_id" value=""/>
+        <input type="button" value="전 체" onclick="window.open('http://221.143.128.201:999/Yangju/stat.html')"/>
+    </form>
+   
+    
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3a7857a3bd564cf642a647203f178f40"></script>
 </head>
 <meta name="viewport" content="user-scalable=yes, initial-scale=1.0, maximum-scale=2.0, minimum-scale=1.0, width=device-width">
@@ -25,12 +32,12 @@
     <button id="traceBtn" onclick="movePosition()">현재위치로 지도 이동</button>
     <button onclick="moveCenter()">중심 위치</button>
     <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
+    
     <a id="link">길 찾기</a><br>
 클릭 지점 : <span id="result2"></span>   <span id="result"></span><br>
 선택폴리곤 : <h7 id="polID"></h7><br>
 관측 지점 : <span id="position_lat"></span> <span id="position_long"></span><br>
 관측 일시 : <span id="recdate"></span><br>
-
 조사자입력 : <input type="text" id="surveyers" value=""/>
 <table> 
 <tr><td><form name="formA" method="post" action="">
@@ -82,6 +89,7 @@ function Request(){
    return requestParam;
  }
 }
+
 // 조사구역에 따른 자료파일 설정
 switch (mapID){
 case '37604039' : var mapCenter = new kakao.maps.LatLng(37.9125, 126.9625); var polygonFile ='./data/Yangju/polygon01.txt'; var polygonCenterFile='./data/Yangju/polygonCenter01.txt'; break;
@@ -154,6 +162,21 @@ case '37608037' : var mapCenter = new kakao.maps.LatLng(37.6625, 126.9125); var 
 case '37608038' : var mapCenter = new kakao.maps.LatLng(37.6625, 126.9375); var polygonFile ='./data/Yangju/polygon18.txt'; var polygonCenterFile='./data/Yangju/polygonCenter18.txt'; break;
 case '37608030' : var mapCenter = new kakao.maps.LatLng(37.6875, 126.9875); var polygonFile ='./data/Yangju/polygon19.txt'; var polygonCenterFile='./data/Yangju/polygonCenter19.txt'; break;
 case '37705021' : var mapCenter = new kakao.maps.LatLng(37.6875, 127.0125); var polygonFile ='./data/Yangju/polygon19.txt'; var polygonCenterFile='./data/Yangju/polygonCenter19.txt'; break;
+}
+document.formC.map_id_b.value = mapID;
+document.formC.map_id.value = mapID;
+
+//도엽별 통계창 띄우기
+function map_stat(){
+    var objPopup = window.open('','myWindow2');
+    document.formC.target="myWindow2";      // 타켓
+    document.formC.action="http://221.143.128.201:999/Yangju/map_stat.html";       // 수행할 경로
+    if ( objPopup == null){                                  // 팝업이 뜨는지 확인
+        alert('차단된 팝업창을 허용해 주세요');}
+    else{
+        document.formC.submit();
+        objPopup.focus();
+    }
 }
 
 //기록창 띄우기(비오톱)
