@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<style type="text/css"> html, body { margin: 0px; height:100%;}  </style>
+             <style> h1 {color : #ffa600; font-weight: bold; font-size: 12pt;} </style>
+             <style> h2 {color : #df9101; font-weight: bold; font-size: 12pt;} </style>
+             <style> h3 {color : #008800; font-weight: bold; font-size: 12pt;} </style>
+             <style> h4 {color : #FFF000; font-size: 11pt;} </style>
+             <style> h5 {color : #FF0000; background-color: rgba(255, 255, 255, 0.5 ); font-size: 10pt;} </style>
+             <style> h6 {color : #140835; line-height: 140%; font-size: 9pt;} </style>
+             <style> h7 {color : #FF0000; font-weight: bold; line-height: 140%; font-size: 10pt;} </style>
+             <style> AA {color : #ff7300; line-height: 140%; font-size: 9pt;} </style>
+             <style> BB {color : #ffee00; line-height: 140%; font-size: 9pt;} </style>
+             <style> CC {color : #34ff9a; line-height: 140%; font-size: 9pt;} </style>
+             <style> EE {color : #ff0000; line-height: 140%; font-size: 11pt; font-weight: bold;} </style>
+             <style> XX {color : #000000; line-height: 140%; font-size: 9pt;} </style>
+             <style> YY {color : #008116; line-height: 140%; font-size: 9pt;} </style>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>양주시 산림 조사</title>
+    <form name="formC" method="post" action="">
+        조사 통계 보기 : <input type="button" name="map_id_b" value="" onclick="map_stat()"/>
+        <input type="hidden" name="map_id" value=""/>
+        <input type="button" value="전 체" onclick="window.open('http://221.143.128.23:999/Yangju/stat.html')"/>
+    </form>
+   
+    
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3a7857a3bd564cf642a647203f178f40"></script>
+</head>
+<meta name="viewport" content="user-scalable=yes, initial-scale=1.0, maximum-scale=2.0, minimum-scale=1.0, width=device-width">
+
+<body>
+<div id="map" style="margin: 0px; width:100%; height:70%; line-height: 120%;"></div>
+<h6>
+    <button id="traceBtn" onclick="traceClickHandler()">현재위치 추적 시작</button>
+    <button id="traceBtn" onclick="movePosition()">현재위치로 지도 이동</button>
+    <button onclick="moveCenter()">중심 위치</button>
+    <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
+    
+    <a id="link">길 찾기</a><br>
+클릭 지점 : <span id="result2"></span>   <span id="result"></span><br>
+선택폴리곤 : <h7 id="polID"></h7><br>
+관측 지점 : <span id="position_lat"></span> <span id="position_long"></span><br>
+관측 일시 : <span id="recdate"></span><br>
+조사자입력 : <input type="text" id="surveyers" value=""/>
+<table> 
+<tr><td><form name="formA" method="post" action="">
+    <input type="button" value="비오톱 정보 기록/수정" onclick="new_window_biotope()"/>
+    <input type="hidden" name="surveyer_new" value=""/>
+    <input type="hidden" name="polID" value=""/>
+    <input type="hidden" name="position_lat" value=""/>
+    <input type="hidden" name="position_long" value=""/>
+    <input type="hidden" name="recdate" value=""/>
+</form></td>
+<td><form name="formB" method="post" action="">
+    <input type="button" value="   생태계교란종 기록   " onclick="new_window_invasive()"/>
+    <input type="hidden" name="surveyer_new" value=""/>
+    <input type="hidden" name="position_lat" value=""/>
+    <input type="hidden" name="position_long" value=""/>
+    <input type="hidden" name="recdate" value=""/>
+</form></td></tr></table>
+</h6>
+<script>
+//==============================================================================================
+//FUNCTION
+//==============================================================================================
+// 마커경로
+var redDot = 'https://jongdukjung.github.io/jongdukjung/biotope/target.png';
+var currentArrow = 'https://jongdukjung.github.io/jongdukjung/biotope/current.png';
+var yellowDot = 'https://jongdukjung.github.io/jongdukjung/biotope/yellow.png'
+
+//도시경계 및 격자 설정
+var boundaryFile = './data/Yangju/boundary.txt';
+var rectangleFile = './data/Yangju/rectangle.txt';
+var rectangleCenterFile = './data/Yangju/rectangleCenter.txt';
+
+// 조사구역이 여러개로 나뉜 경우 환경 설정
+// 구역 id 받기
+var request = new Request();
+var mapID = request.getParameter("mapID"); 
+function Request(){
+ var requestParam ="";
+  this.getParameter = function(param){
+   var url = unescape(location.href);
+   var paramArr = (url.substring(url.indexOf("?")+1,url.length)).split("&");
+   for(var i = 0 ; i < paramArr.length ; i++){
+     var temp = paramArr[i].split("=");
+     if(temp[0].toUpperCase() == param.toUpperCase()){
+       requestParam = paramArr[i].split("=")[1];
+       break;
+     }
+   }
+   return requestParam;
+ }
+}
+
+// 조사구역에 따른 자료파일 설정
+switch (mapID){
+case '00000001' : var mapCenter = new kakao.maps.LatLng(37.9125, 126.9625); var polygonFile ='./data/Yangju/polygon01.txt'; var polygonCenterFile='./data/Yangju/polygonCenter01.txt'; break;
+case '00000002' : var mapCenter = new kakao.maps.LatLng(37.9125, 126.9625); var polygonFile ='./data/Yangju/polygon01.txt'; var polygonCenterFile='./data/Yangju/polygonCenter01.txt'; break;
+case '37604039' : var mapCenter = new kakao.maps.LatLng(37.9125, 126.9625); var polygonFile ='./data/Yangju/polygon01.txt'; var polygonCenterFile='./data/Yangju/polygonCenter01.txt'; break;
+case '37604030' : var mapCenter = new kakao.maps.LatLng(37.9375, 126.9875); var polygonFile ='./data/Yangju/polygon02.txt'; var polygonCenterFile='./data/Yangju/polygonCenter02.txt'; break;
+case '37604040' : var mapCenter = new kakao.maps.LatLng(37.9125, 126.9875); var polygonFile ='./data/Yangju/polygon02.txt'; var polygonCenterFile='./data/Yangju/polygonCenter02.txt'; break;
+case '37701021' : var mapCenter = new kakao.maps.LatLng(37.9375, 127.0125); var polygonFile ='./data/Yangju/polygon02.txt'; var polygonCenterFile='./data/Yangju/polygonCenter02.txt'; break;
+case '37701031' : var mapCenter = new kakao.maps.LatLng(37.9125, 127.0125); var polygonFile ='./data/Yangju/polygon02.txt'; var polygonCenterFile='./data/Yangju/polygonCenter02.txt'; break;
+case '37604048' : var mapCenter = new kakao.maps.LatLng(37.8875, 126.9375); var polygonFile ='./data/Yangju/polygon03.txt'; var polygonCenterFile='./data/Yangju/polygonCenter03.txt'; break;
+case '37604049' : var mapCenter = new kakao.maps.LatLng(37.8875, 126.9625); var polygonFile ='./data/Yangju/polygon03.txt'; var polygonCenterFile='./data/Yangju/polygonCenter03.txt'; break;
+case '37604058' : var mapCenter = new kakao.maps.LatLng(37.8625, 126.9375); var polygonFile ='./data/Yangju/polygon03.txt'; var polygonCenterFile='./data/Yangju/polygonCenter03.txt'; break;
+case '37604059' : var mapCenter = new kakao.maps.LatLng(37.8625, 126.9625); var polygonFile ='./data/Yangju/polygon03.txt'; var polygonCenterFile='./data/Yangju/polygonCenter03.txt'; break;
+case '37604050' : var mapCenter = new kakao.maps.LatLng(37.8875, 126.9875); var polygonFile ='./data/Yangju/polygon04.txt'; var polygonCenterFile='./data/Yangju/polygonCenter04.txt'; break;
+case '37604060' : var mapCenter = new kakao.maps.LatLng(37.8625, 126.9875); var polygonFile ='./data/Yangju/polygon04.txt'; var polygonCenterFile='./data/Yangju/polygonCenter04.txt'; break;
+case '37701041' : var mapCenter = new kakao.maps.LatLng(37.8875, 127.0125); var polygonFile ='./data/Yangju/polygon04.txt'; var polygonCenterFile='./data/Yangju/polygonCenter04.txt'; break;
+case '37701051' : var mapCenter = new kakao.maps.LatLng(37.8625, 127.0125); var polygonFile ='./data/Yangju/polygon04.txt'; var polygonCenterFile='./data/Yangju/polygonCenter04.txt'; break;
+case '37701042' : var mapCenter = new kakao.maps.LatLng(37.8875, 127.0375); var polygonFile ='./data/Yangju/polygon05.txt'; var polygonCenterFile='./data/Yangju/polygonCenter05.txt'; break;
+case '37701043' : var mapCenter = new kakao.maps.LatLng(37.8875, 127.0625); var polygonFile ='./data/Yangju/polygon05.txt'; var polygonCenterFile='./data/Yangju/polygonCenter05.txt'; break;
+case '37701052' : var mapCenter = new kakao.maps.LatLng(37.8625, 127.0375); var polygonFile ='./data/Yangju/polygon05.txt'; var polygonCenterFile='./data/Yangju/polygonCenter05.txt'; break;
+case '37701053' : var mapCenter = new kakao.maps.LatLng(37.8625, 127.0625); var polygonFile ='./data/Yangju/polygon05.txt'; var polygonCenterFile='./data/Yangju/polygonCenter05.txt'; break;
+case '37701054' : var mapCenter = new kakao.maps.LatLng(37.8625, 127.0875); var polygonFile ='./data/Yangju/polygon06.txt'; var polygonCenterFile='./data/Yangju/polygonCenter06.txt'; break;
+case '37701055' : var mapCenter = new kakao.maps.LatLng(37.8625, 127.1125); var polygonFile ='./data/Yangju/polygon06.txt'; var polygonCenterFile='./data/Yangju/polygonCenter06.txt'; break;
+case '37604067' : var mapCenter = new kakao.maps.LatLng(37.8375, 126.9125); var polygonFile ='./data/Yangju/polygon07.txt'; var polygonCenterFile='./data/Yangju/polygonCenter07.txt'; break;
+case '37604077' : var mapCenter = new kakao.maps.LatLng(37.8125, 126.9125); var polygonFile ='./data/Yangju/polygon07.txt'; var polygonCenterFile='./data/Yangju/polygonCenter07.txt'; break;
+case '37604087' : var mapCenter = new kakao.maps.LatLng(37.7875, 126.9125); var polygonFile ='./data/Yangju/polygon07.txt'; var polygonCenterFile='./data/Yangju/polygonCenter07.txt'; break;
+case '37604068' : var mapCenter = new kakao.maps.LatLng(37.8375, 126.9375); var polygonFile ='./data/Yangju/polygon08.txt'; var polygonCenterFile='./data/Yangju/polygonCenter08.txt'; break;
+case '37604069' : var mapCenter = new kakao.maps.LatLng(37.8375, 126.9625); var polygonFile ='./data/Yangju/polygon08.txt'; var polygonCenterFile='./data/Yangju/polygonCenter08.txt'; break;
+case '37604078' : var mapCenter = new kakao.maps.LatLng(37.8125, 126.9375); var polygonFile ='./data/Yangju/polygon08.txt'; var polygonCenterFile='./data/Yangju/polygonCenter08.txt'; break;
+case '37604079' : var mapCenter = new kakao.maps.LatLng(37.8125, 126.9625); var polygonFile ='./data/Yangju/polygon08.txt'; var polygonCenterFile='./data/Yangju/polygonCenter08.txt'; break;
+case '37604070' : var mapCenter = new kakao.maps.LatLng(37.8375, 126.9875); var polygonFile ='./data/Yangju/polygon09.txt'; var polygonCenterFile='./data/Yangju/polygonCenter09.txt'; break;
+case '37604080' : var mapCenter = new kakao.maps.LatLng(37.8125, 126.9875); var polygonFile ='./data/Yangju/polygon09.txt'; var polygonCenterFile='./data/Yangju/polygonCenter09.txt'; break;
+case '37701061' : var mapCenter = new kakao.maps.LatLng(37.8375, 127.0125); var polygonFile ='./data/Yangju/polygon09.txt'; var polygonCenterFile='./data/Yangju/polygonCenter09.txt'; break;
+case '37701071' : var mapCenter = new kakao.maps.LatLng(37.8125, 127.0125); var polygonFile ='./data/Yangju/polygon09.txt'; var polygonCenterFile='./data/Yangju/polygonCenter09.txt'; break;
+case '37701062' : var mapCenter = new kakao.maps.LatLng(37.8375, 127.0375); var polygonFile ='./data/Yangju/polygon10.txt'; var polygonCenterFile='./data/Yangju/polygonCenter10.txt'; break;
+case '37701063' : var mapCenter = new kakao.maps.LatLng(37.8375, 127.0625); var polygonFile ='./data/Yangju/polygon10.txt'; var polygonCenterFile='./data/Yangju/polygonCenter10.txt'; break;
+case '37701072' : var mapCenter = new kakao.maps.LatLng(37.8125, 127.0375); var polygonFile ='./data/Yangju/polygon10.txt'; var polygonCenterFile='./data/Yangju/polygonCenter10.txt'; break;
+case '37701073' : var mapCenter = new kakao.maps.LatLng(37.8125, 127.0625); var polygonFile ='./data/Yangju/polygon10.txt'; var polygonCenterFile='./data/Yangju/polygonCenter10.txt'; break;
+case '37701064' : var mapCenter = new kakao.maps.LatLng(37.8375, 127.0875); var polygonFile ='./data/Yangju/polygon11.txt'; var polygonCenterFile='./data/Yangju/polygonCenter11.txt'; break;
+case '37701065' : var mapCenter = new kakao.maps.LatLng(37.8375, 127.1125); var polygonFile ='./data/Yangju/polygon11.txt'; var polygonCenterFile='./data/Yangju/polygonCenter11.txt'; break;
+case '37701074' : var mapCenter = new kakao.maps.LatLng(37.8125, 127.0875); var polygonFile ='./data/Yangju/polygon11.txt'; var polygonCenterFile='./data/Yangju/polygonCenter11.txt'; break;
+case '37701075' : var mapCenter = new kakao.maps.LatLng(37.8125, 127.1125); var polygonFile ='./data/Yangju/polygon11.txt'; var polygonCenterFile='./data/Yangju/polygonCenter11.txt'; break;
+case '37604088' : var mapCenter = new kakao.maps.LatLng(37.7875, 126.9375); var polygonFile ='./data/Yangju/polygon12.txt'; var polygonCenterFile='./data/Yangju/polygonCenter12.txt'; break;
+case '37604089' : var mapCenter = new kakao.maps.LatLng(37.7875, 126.9625); var polygonFile ='./data/Yangju/polygon12.txt'; var polygonCenterFile='./data/Yangju/polygonCenter12.txt'; break;
+case '37604098' : var mapCenter = new kakao.maps.LatLng(37.7625, 126.9375); var polygonFile ='./data/Yangju/polygon12.txt'; var polygonCenterFile='./data/Yangju/polygonCenter12.txt'; break;
+case '37604099' : var mapCenter = new kakao.maps.LatLng(37.7625, 126.9625); var polygonFile ='./data/Yangju/polygon12.txt'; var polygonCenterFile='./data/Yangju/polygonCenter12.txt'; break;
+case '37604090' : var mapCenter = new kakao.maps.LatLng(37.7875, 126.9875); var polygonFile ='./data/Yangju/polygon13.txt'; var polygonCenterFile='./data/Yangju/polygonCenter13.txt'; break;
+case '37604100' : var mapCenter = new kakao.maps.LatLng(37.7625, 126.9875); var polygonFile ='./data/Yangju/polygon13.txt'; var polygonCenterFile='./data/Yangju/polygonCenter13.txt'; break;
+case '37701081' : var mapCenter = new kakao.maps.LatLng(37.7875, 127.0125); var polygonFile ='./data/Yangju/polygon13.txt'; var polygonCenterFile='./data/Yangju/polygonCenter13.txt'; break;
+case '37701091' : var mapCenter = new kakao.maps.LatLng(37.7625, 127.0125); var polygonFile ='./data/Yangju/polygon13.txt'; var polygonCenterFile='./data/Yangju/polygonCenter13.txt'; break;
+case '37701082' : var mapCenter = new kakao.maps.LatLng(37.7875, 127.0375); var polygonFile ='./data/Yangju/polygon14.txt'; var polygonCenterFile='./data/Yangju/polygonCenter14.txt'; break;
+case '37701083' : var mapCenter = new kakao.maps.LatLng(37.7875, 127.0625); var polygonFile ='./data/Yangju/polygon14.txt'; var polygonCenterFile='./data/Yangju/polygonCenter14.txt'; break;
+case '37701092' : var mapCenter = new kakao.maps.LatLng(37.7625, 127.0375); var polygonFile ='./data/Yangju/polygon14.txt'; var polygonCenterFile='./data/Yangju/polygonCenter14.txt'; break;
+case '37701093' : var mapCenter = new kakao.maps.LatLng(37.7625, 127.0625); var polygonFile ='./data/Yangju/polygon14.txt'; var polygonCenterFile='./data/Yangju/polygonCenter14.txt'; break;
+case '37701084' : var mapCenter = new kakao.maps.LatLng(37.7875, 127.0875); var polygonFile ='./data/Yangju/polygon15.txt'; var polygonCenterFile='./data/Yangju/polygonCenter15.txt'; break;
+case '37701085' : var mapCenter = new kakao.maps.LatLng(37.7875, 127.1125); var polygonFile ='./data/Yangju/polygon15.txt'; var polygonCenterFile='./data/Yangju/polygonCenter15.txt'; break;
+case '37701094' : var mapCenter = new kakao.maps.LatLng(37.7625, 127.0875); var polygonFile ='./data/Yangju/polygon15.txt'; var polygonCenterFile='./data/Yangju/polygonCenter15.txt'; break;
+case '37608007' : var mapCenter = new kakao.maps.LatLng(37.7375, 126.9125); var polygonFile ='./data/Yangju/polygon16.txt'; var polygonCenterFile='./data/Yangju/polygonCenter16.txt'; break;
+case '37608008' : var mapCenter = new kakao.maps.LatLng(37.7375, 126.9375); var polygonFile ='./data/Yangju/polygon16.txt'; var polygonCenterFile='./data/Yangju/polygonCenter16.txt'; break;
+case '37608009' : var mapCenter = new kakao.maps.LatLng(37.7375, 126.9625); var polygonFile ='./data/Yangju/polygon16.txt'; var polygonCenterFile='./data/Yangju/polygonCenter16.txt'; break;
+case '37608017' : var mapCenter = new kakao.maps.LatLng(37.7125, 126.9125); var polygonFile ='./data/Yangju/polygon16.txt'; var polygonCenterFile='./data/Yangju/polygonCenter16.txt'; break;
+case '37608018' : var mapCenter = new kakao.maps.LatLng(37.7125, 126.9375); var polygonFile ='./data/Yangju/polygon16.txt'; var polygonCenterFile='./data/Yangju/polygonCenter16.txt'; break;
+case '37608019' : var mapCenter = new kakao.maps.LatLng(37.7125, 126.9625); var polygonFile ='./data/Yangju/polygon16.txt'; var polygonCenterFile='./data/Yangju/polygonCenter16.txt'; break;
+case '37608010' : var mapCenter = new kakao.maps.LatLng(37.7375, 126.9875); var polygonFile ='./data/Yangju/polygon17.txt'; var polygonCenterFile='./data/Yangju/polygonCenter17.txt'; break;
+case '37608020' : var mapCenter = new kakao.maps.LatLng(37.7125, 126.9875); var polygonFile ='./data/Yangju/polygon17.txt'; var polygonCenterFile='./data/Yangju/polygonCenter17.txt'; break;
+case '37705001' : var mapCenter = new kakao.maps.LatLng(37.7375, 127.0125); var polygonFile ='./data/Yangju/polygon17.txt'; var polygonCenterFile='./data/Yangju/polygonCenter17.txt'; break;
+case '37705011' : var mapCenter = new kakao.maps.LatLng(37.7125, 127.0125); var polygonFile ='./data/Yangju/polygon17.txt'; var polygonCenterFile='./data/Yangju/polygonCenter17.txt'; break;
+case '37608027' : var mapCenter = new kakao.maps.LatLng(37.6875, 126.9125); var polygonFile ='./data/Yangju/polygon18.txt'; var polygonCenterFile='./data/Yangju/polygonCenter18.txt'; break;
+case '37608028' : var mapCenter = new kakao.maps.LatLng(37.6875, 126.9375); var polygonFile ='./data/Yangju/polygon18.txt'; var polygonCenterFile='./data/Yangju/polygonCenter18.txt'; break;
+case '37608029' : var mapCenter = new kakao.maps.LatLng(37.6875, 126.9625); var polygonFile ='./data/Yangju/polygon18.txt'; var polygonCenterFile='./data/Yangju/polygonCenter18.txt'; break;
+case '37608037' : var mapCenter = new kakao.maps.LatLng(37.6625, 126.9125); var polygonFile ='./data/Yangju/polygon18.txt'; var polygonCenterFile='./data/Yangju/polygonCenter18.txt'; break;
+case '37608038' : var mapCenter = new kakao.maps.LatLng(37.6625, 126.9375); var polygonFile ='./data/Yangju/polygon18.txt'; var polygonCenterFile='./data/Yangju/polygonCenter18.txt'; break;
+case '37608030' : var mapCenter = new kakao.maps.LatLng(37.6875, 126.9875); var polygonFile ='./data/Yangju/polygon19.txt'; var polygonCenterFile='./data/Yangju/polygonCenter19.txt'; break;
+case '37705021' : var mapCenter = new kakao.maps.LatLng(37.6875, 127.0125); var polygonFile ='./data/Yangju/polygon19.txt'; var polygonCenterFile='./data/Yangju/polygonCenter19.txt'; break;
+}
+document.formC.map_id_b.value = mapID;
+document.formC.map_id.value = mapID;
+
+//도엽별 통계창 띄우기
+function map_stat(){
+    var objPopup = window.open('','myWindow2');
+    document.formC.target="myWindow2";      // 타켓
+    document.formC.action="http://221.143.128.23:999/Yangju/map_stat.html";       // 수행할 경로
+    if ( objPopup == null){                                  // 팝업이 뜨는지 확인
+        alert('차단된 팝업창을 허용해 주세요');}
+    else{
+        document.formC.submit();
+        objPopup.focus();
+    }
+}
+
+//기록창 띄우기(비오톱)
+function new_window_biotope(){
+//기록용 정보 받기(비오톱)
+    //조사자 입력 값 받기
+    const surveyers = document.getElementById("surveyers").value;
+    document.formA.surveyer_new.value = surveyers;
+    //기록 시간 받기
+    var time= new Date(); //시간받기위해서 new date
+    var month = time.getMonth()+1;
+    document.formA.recdate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+    //관측지점 받기
+    function success1(position) {
+        document.formA.position_lat.value = position.coords.latitude;
+        document.formA.position_long.value = position.coords.longitude;
+        if(!document.formA.polID.value){
+           alert('먼저 폴리곤을 선택해 주세요');}
+        else{
+           if(!document.formA.surveyer_new.value){
+           alert('조사자를 입력해 주세요=조사자1, 조사자2...');}
+            else{
+                var objPopup = window.open('','myWindow');
+                document.formA.target="myWindow";      // 타켓
+                document.formA.action="http://221.143.128.23:999/Yangju/record_pg.html";       // 수행할 경로
+                if ( objPopup == null){                                  // 팝업이 뜨는지 확인
+                    alert('차단된 팝업창을 허용해 주세요');}
+                else{
+                    document.formA.submit();
+                    objPopup.focus();
+                }
+            }
+        }
+    }
+    function error1() {
+        alert('현재 위치를 알 수 없습니다');
+    }
+    var options1 = {
+        enableHighAccuracy: true,
+        maximumAge: 1000,
+        timeout: 3000
+    }
+    const positionXY = navigator.geolocation.getCurrentPosition(success1, error1, options1);
+}
+//기록창 띄우기(생태계교란종)
+function new_window_invasive(){
+//기록용 정보 받기(생태계교란종)
+    //조사자 입력 값 받기
+    const surveyers = document.getElementById("surveyers").value;
+    document.formB.surveyer_new.value = surveyers;
+    //기록 시간 받기
+    var time= new Date(); //시간받기위해서 new date
+    var month = time.getMonth()+1;
+    document.formB.recdate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+    //관측지점 받기
+    function success2(position) {
+        document.formB.position_lat.value = position.coords.latitude;
+        document.formB.position_long.value = position.coords.longitude;
+        if(!document.formB.surveyer_new.value){
+           alert('조사자를 입력해 주세요=조사자1, 조사자2...');}
+        else{
+            var objPopup = window.open('','myWindow');
+            document.formB.target="myWindow";      // 타켓
+            document.formB.action="http://221.143.128.23:999/Yangju/record_invasive_pg.html";       // 수행할 경로
+            if ( objPopup == null){                                  // 팝업이 뜨는지 확인
+                alert('차단된 팝업창을 허용해 주세요');}
+            else{
+                document.formB.submit();
+                objPopup.focus();
+            }
+        }
+    }
+    function error2() {
+        alert('현재 위치를 알 수 없습니다');
+    }
+    var options2 = {
+        enableHighAccuracy: true,
+        maximumAge: 1000,
+        timeout: 3000
+    }
+    navigator.geolocation.getCurrentPosition(success2, error2, options2);
+}
+
+// 현재위치 추적 시작-끄기
+var options = {
+  enableHighAccuracy: true,
+  timeout: 3000,
+  maximumAge: 1000
+}
+var tracing = false;
+var watchid;
+function traceClickHandler(){
+    if(tracing == true){
+        traceStop();
+        tracing = false;
+        document.getElementById("traceBtn").innerText = "현재위치 추적 시작";
+    }else if(tracing == false){
+        traceStart();
+        tracing = true;
+        document.getElementById("traceBtn").innerText = "현재위치 추적 중지";
+    }
+}
+function traceStart() {
+ watchid = navigator.geolocation.watchPosition(success, error, options);
+}
+function traceStop() {
+    navigator.geolocation.clearWatch(watchid);
+}
+
+var alpha;
+function success(position) {
+    var lat = position.coords.latitude, lon = position.coords.longitude;
+    window.addEventListener("deviceorientationabsolute", handler, true);
+    var locPosition = new kakao.maps.LatLng(lat, lon);
+    displayMarker(locPosition, alpha);
+}
+function handler(compass) {
+  alpha = compass.webkitCompassHeading || Math.abs(compass.alpha - 360);
+}
+
+function error(err) {
+    alert('현재 위치를 알 수 없습니다');
+	var locPosition = mapCenter; // 지도의 중심 좌표
+        displayMarker(locPosition, 0);
+}
+
+// 마커 표시-현재위치 추적
+var marker1= new kakao.maps.Marker();
+function displayMarker(locPosition, alpha) {
+    marker1.setMap(null);
+    var markerImage = '<div class="image-box" style="transform:rotate('+alpha+'deg)";> <img class="image" src='+currentArrow+' alt = "◆"></div>';
+    marker1 = new kakao.maps.CustomOverlay({  
+        map: map, 
+        position: locPosition,
+		content: markerImage,
+        yAnchor: 1
+    });
+    marker1.setMap(map); 
+}
+
+// 마커 표시하고 센터 이동하기-현재위치
+function movePosition(){
+    var locPosition;
+    const positionXY = navigator.geolocation.getCurrentPosition(success3, error3, options3);
+    function success3(position) {
+        var lat = position.coords.latitude, lon = position.coords.longitude
+        locPosition = new kakao.maps.LatLng(lat, lon);
+        displayMarker2(locPosition);
+    }
+    function error3() {
+        alert('현재 위치를 알 수 없습니다');
+    }
+    var options3 = {
+        enableHighAccuracy: true,
+        maximumAge: 1000,
+        timeout: 3000
+    };
+}
+
+var marker2= new kakao.maps.Marker();
+function displayMarker2(locPosition) {
+    marker2.setMap(null);
+    var imageSrc = yellowDot; // 마커이미지의 주소입니다   
+    var imageSize = new kakao.maps.Size(12, 12); 
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
+	marker2 = new kakao.maps.Marker({  
+        map: map, 
+        position: locPosition,
+		image: markerImage
+    }); 
+	marker2.setMap(map);
+    map.setCenter(locPosition);      
+}
+
+// 클릭지점 마커 표시하기
+var marker3= new kakao.maps.Marker();
+function displayMarker3(locPosition) {
+    marker3.setMap(null);
+    var imageSrc = redDot; // 마커이미지의 주소입니다   
+    var imageSize = new kakao.maps.Size(12, 12); 
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
+	marker3 = new kakao.maps.Marker({  
+        map: map, 
+        position: locPosition,
+		image: markerImage
+    });
+    marker3.setMap(map);
+}
+// 중심좌표로 이동
+function moveCenter(){
+    var locPosition = mapCenter; // 지도의 중심좌표
+    map.setCenter(locPosition);   
+}
+// 도시 경계 그리기
+function drawBoundary(boundaryPath){
+    var polygon3 = new kakao.maps.Polygon({
+            path: boundaryPath, // 그려질 다각형의 좌표 배열입니다
+            strokeWeight: 2, // 선의 두께입니다
+            strokeColor: '#0404B4', // 선의 색깔입니다
+            strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+            fillOpacity: 0 // 채우기 불투명도 입니다
+        });
+        polygon3.setMap(map);
+}
+// 폴리곤 만들기
+function drawPolygonA(polygonPaths){
+    for (var i = 0; i < polygonPaths.length; i ++) { displayArea(polygonPaths[i]);}
+}
+
+function displayArea(polygonPaths) {
+    var stroCol ='#0101DF';
+    var fillCol ='#ffffff';
+    var fillOpa ='0.01';
+    var polygon = new kakao.maps.Polygon({
+        path: polygonPaths.path, // 그려질 다각형의 좌표 배열입니다
+        strokeWeight: 1, // 선의 두께입니다
+        strokeColor: stroCol, // 선의 색깔입니다
+        strokeOpacity: 0.5, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+        fillColor: fillCol, // 채우기 색깔입니다
+        fillOpacity: fillOpa // 채우기 불투명도 입니다
+    });
+   // 폴리곤 클릭시 작동
+    kakao.maps.event.addListener(polygon, 'click', function(mouseEvent) {
+        //이전 폴리곤 지우기
+        pastpolygon.setOptions({strokeColor: stroCol, strokeOpacity: 0.5, fillColor: fillCol, fillOpacity: fillOpa});  
+        //선택 폴리곤 색칠
+        polygon.setOptions({ fillColor: '#0101DF', fillOpacity: 0.3});   
+        
+        //기록용 정보
+        var result2Div = document.getElementById('polID');
+        result2Div.innerHTML = polygonPaths.name;
+        document.formA.polID.value = polygonPaths.name;
+        //기록 시간 받기
+        var time= new Date(); //시간받기위해서 new date
+        var month = time.getMonth()+1;
+        document.getElementById("recdate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+        //관측지점 받기
+        function success4(position) {
+          document.getElementById("position_lat").innerHTML=position.coords.latitude;
+          document.getElementById("position_long").innerHTML=position.coords.longitude;
+        }
+        function error4() {
+            alert('현재 위치를 알 수 없습니다');
+        }
+        var options4 = {
+            enableHighAccuracy: true,
+            maximumAge: 1000,
+            timeout: 10000
+        };
+        const positionXY = navigator.geolocation.getCurrentPosition(success4, error4, options4);
+        //활성화된 폴리곤 지우기위해 저장
+        pastpolygon=polygon;
+    });
+    pastpolygon.setMap(map);     
+    polygon.setMap(map);
+}
+// 지도에 표시할 격자를 생성합니다
+function drawRectangle(rectanglePath){
+    for (var i = 0; i < rectanglePath.length; i ++) {
+        var rectangleLayer = new kakao.maps.Polygon({
+            path: rectanglePath[i].path, // 그려질 다각형의 좌표 배열입니다
+            strokeWeight: 0.5, // 선의 두께입니다
+            strokeColor: '#ffa600', // 선의 색깔입니다
+            strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+            fillColor: '#A2FF99', // 채우기 색깔입니다
+            fillOpacity: 0 // 채우기 불투명도 입니다
+        });
+        rectangleLayer.setMap(map);
+    }
+}
+//지도에 텍스트 표시하기-격자 이름
+function drawText(coordList){
+    for (var i = 0; i < coordList.length; i ++) {
+        var recText = new kakao.maps.CustomOverlay({
+            position: coordList[i].latlng,
+            content: coordList[i].title
+        });
+        recText.setMap(map);
+    }
+}
+//폴리곤 이름 켜고 끄기
+function polygonNameClickHandler(){
+    console.log("polygonNameClickHandler() call");
+    if(polygonNameVisible == true){
+        offName();
+        polygonNameVisible = false;
+        document.getElementById("polygonNameBtn").innerText = "폴리곤이름 켜기";
+    } else if(polygonNameVisible == false){
+        onName();
+        polygonNameVisible = true;
+        document.getElementById("polygonNameBtn").innerText = "폴리곤이름 끄기";
+    }
+}
+function onName() {
+    console.log("onName() call");
+    if(polygonNameArr.length == 0){
+        for (var i = 0; i < coordList2.length; i ++) {
+            var customOverlay = new kakao.maps.CustomOverlay({
+                position: coordList2[i].latlng,
+                content: coordList2[i].title
+            });
+            customOverlay.setMap(map);
+            polygonNameArr.push(customOverlay);
+        }
+    } else if(polygonNameArr.length > 0) {
+        for(var i in polygonNameArr){
+            polygonNameArr[i].setVisible(true);
+        }
+    }
+}
+function offName(){
+    console.log("offName() call");
+    if(polygonNameArr.length > 0) {
+        for(var i in polygonNameArr){
+            polygonNameArr[i].setVisible(false);
+        }
+    }
+}
+
+
+
+
+//==============================================================================================
+//==============================================================================================
+
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = { 
+        center: mapCenter, // 지도의 중심좌표
+        level: 8 // 지도의 확대 레벨
+    };  
+
+var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+// 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+var mapTypeControl = new kakao.maps.MapTypeControl();
+map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+var zoomControl = new kakao.maps.ZoomControl();
+map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+// 클릭 위치표시
+kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
+    // 클릭한 위도, 경도 정보를 가져옵니다 
+    var latlng = mouseEvent.latLng;
+    var currentLat = latlng.getLat();
+    var currentLng = latlng.getLng();
+    currentLat=currentLat.toFixed(6);
+    currentLng=currentLng.toFixed(6);
+    var message = currentLat + ', ';
+    message += + currentLng;
+    var link = 'https://map.kakao.com/link/to/목적지,'+ message;
+    document.getElementById("link").setAttribute("href",link);
+
+    var resultDiv = document.getElementById('result'); 
+    resultDiv.innerHTML = message;
+    
+    var latDeg=Math.floor(currentLat);
+    var latMin=Math.floor((currentLat-latDeg)*60);
+    var prelatSec=((currentLat-latDeg)*60-latMin)*60;
+    var latSec=prelatSec.toFixed(2);
+    var lngDeg=Math.floor(currentLng);
+    var lngMin=Math.floor((currentLng-lngDeg)*60);
+    var prelngSec=((currentLng-lngDeg)*60-lngMin)*60;
+    var lngSec=prelngSec.toFixed(2);
+    const linesep = "\n\n"
+    message2 =latDeg +"°" + latMin +"′" + latSec+"″, " + lngDeg +"°" + lngMin +"′" + lngSec+"″"; 
+    var result2Div = document.getElementById('result2'); 
+    result2Div.innerHTML = message2;
+    displayMarker3(latlng);
+});
+// 도시 경계 표시하기
+var boundary = new XMLHttpRequest();
+boundary.open('GET', boundaryFile, true);
+boundary.overrideMimeType('text/plain; charset=utf-8');
+boundary.onload = function() {
+    if (boundary.status == 200) {
+        var boundaryPath = eval(boundary.responseText);
+        drawBoundary(boundaryPath); 
+    }
+}
+boundary.send(null);
+//지도에 격자 표시하기
+var rectangle = new XMLHttpRequest();
+rectangle.open('GET', rectangleFile, true);
+rectangle.overrideMimeType('text/plain; charset=utf-8');
+rectangle.onload = function() {
+    if (rectangle.status == 200) {
+        var rectanglePath = eval(rectangle.responseText);
+        drawRectangle(rectanglePath);
+    }
+}
+rectangle.send(null);
+//격자 번호 표시하기
+var pointText1 = new XMLHttpRequest();
+pointText1.open('GET', rectangleCenterFile, true);
+pointText1.overrideMimeType('text/plain; charset=utf-8');
+pointText1.onload = function() {
+    if (pointText1.status == 200) {
+        var coordList1 = eval(pointText1.responseText);
+        drawText(coordList1);
+    }
+}
+pointText1.send(null);
+//지도에 조사폴리곤 표시하기
+var pastpolygon = new kakao.maps.Polygon();
+var polygonFile1 = new XMLHttpRequest();
+polygonFile1.open('GET', polygonFile, true);
+polygonFile1.overrideMimeType('text/plain; charset=utf-8');
+polygonFile1.onload = function() {
+    if (polygonFile1.status == 200) {
+        var polygonPath1 = eval(polygonFile1.responseText);
+        drawPolygonA(polygonPath1);
+    }
+}
+polygonFile1.send(null);
+// 폴리곤 텍스트 및 중심점 표시하기(끄기 켜기 포함)
+var polygonNameVisible = false;
+var coordList2=[];
+// 폴리곤 이름 좌표 불러오기
+var pointText3 = new XMLHttpRequest();
+pointText3.open('GET', polygonCenterFile, true);
+pointText3.overrideMimeType('text/plain; charset=utf-8');
+pointText3.onload = function() {
+    if (pointText3.status == 200) {
+        coordList2 = eval(pointText3.responseText);
+    }
+}
+pointText3.send(null);
+var polygonNameArr = [];
+</script>
+</body>
+</html>
