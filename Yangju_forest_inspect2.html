@@ -13,15 +13,64 @@
              <style> EE {color : #ff0000; line-height: 140%; font-size: 11pt; font-weight: bold;} </style>
              <style> XX {color : #000000; line-height: 140%; font-size: 9pt;} </style>
              <style> YY {color : #008116; line-height: 140%; font-size: 9pt;} </style>
+<style>
+#container {overflow:hidden;height:90%;position:relative;}
+#mapWrapper {width:100%;height:100%;z-index:1;}
+#rvWrapper {width:50%;height:100%;top:0;right:0;position:absolute;z-index:0;}
+#container.view_roadview #mapWrapper {width: 50%;}
+#roadviewControl {position:absolute;top:5px;left:5px;width:42px;height:42px;z-index: 1;cursor: pointer; background: url(https://t1.daumcdn.net/localimg/localimages/07/2018/pc/common/img_search.png) 0 -450px no-repeat;}
+#roadviewControl.active {background-position:0 -350px;}
+#close {position: absolute;padding: 4px;top: 5px;left: 5px;cursor: pointer;background: #fff;border-radius: 4px;border: 1px solid #c8c8c8;box-shadow: 0px 1px #888;}
+#close .img {display: block;background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/rv_close.png) no-repeat;width: 14px;height: 14px;}
+</style>      
+<style>
+    /* 지도위에 로드뷰의 위치와 각도를 표시하기 위한 map walker 아이콘의 스타일 */
+    .MapWalker {position:absolute;margin:-26px 0 0 -51px}
+    .MapWalker .figure {position:absolute;width:25px;left:38px;top:-2px;
+        height:39px;background:url(https://t1.daumcdn.net/localimg/localimages/07/2018/pc/roadview_minimap_wk_2018.png) -298px -114px no-repeat}
+    .MapWalker .angleBack {width:102px;height:52px;background: url(https://t1.daumcdn.net/localimg/localimages/07/2018/pc/roadview_minimap_wk_2018.png) -834px -2px no-repeat;}
+    .MapWalker.m0 .figure {background-position: -298px -114px;}
+    .MapWalker.m1 .figure {background-position: -335px -114px;}
+    .MapWalker.m2 .figure {background-position: -372px -114px;}
+    .MapWalker.m3 .figure {background-position: -409px -114px;}
+    .MapWalker.m4 .figure {background-position: -446px -114px;}
+    .MapWalker.m5 .figure {background-position: -483px -114px;}
+    .MapWalker.m6 .figure {background-position: -520px -114px;}
+    .MapWalker.m7 .figure {background-position: -557px -114px;}
+    .MapWalker.m8 .figure {background-position: -2px -114px;}
+    .MapWalker.m9 .figure {background-position: -39px -114px;}
+    .MapWalker.m10 .figure {background-position: -76px -114px;}
+    .MapWalker.m11 .figure {background-position: -113px -114px;}
+    .MapWalker.m12 .figure {background-position: -150px -114px;}
+    .MapWalker.m13 .figure {background-position: -187px -114px;}
+    .MapWalker.m14 .figure {background-position: -224px -114px;}
+    .MapWalker.m15 .figure {background-position: -261px -114px;}
+    .MapWalker.m0 .angleBack {background-position: -834px -2px;}
+    .MapWalker.m1 .angleBack {background-position: -938px -2px;}
+    .MapWalker.m2 .angleBack {background-position: -1042px -2px;}
+    .MapWalker.m3 .angleBack {background-position: -1146px -2px;}
+    .MapWalker.m4 .angleBack {background-position: -1250px -2px;}
+    .MapWalker.m5 .angleBack {background-position: -1354px -2px;}
+    .MapWalker.m6 .angleBack {background-position: -1458px -2px;}
+    .MapWalker.m7 .angleBack {background-position: -1562px -2px;}
+    .MapWalker.m8 .angleBack {background-position: -2px -2px;}
+    .MapWalker.m9 .angleBack {background-position: -106px -2px;}
+    .MapWalker.m10 .angleBack {background-position: -210px -2px;}
+    .MapWalker.m11 .angleBack {background-position: -314px -2px;}
+    .MapWalker.m12 .angleBack {background-position: -418px -2px;}
+    .MapWalker.m13 .angleBack {background-position: -522px -2px;}
+    .MapWalker.m14 .angleBack {background-position: -626px -2px;}
+    .MapWalker.m15 .angleBack {background-position: -730px -2px;}
+</style>
 
 <html>
 <head>
     <meta charset="utf-8">
     <title>양주시 산림 조사 점검</title>
     <form name="formC" method="post" action="">
-        조사 통계 보기 : <input type="button" name="map_id_b" value="" onclick="map_stat()"/>
+        <input type="hidden" name="map_id_b" value="" onclick="map_stat()"/>
         <input type="hidden" name="map_id" value=""/>
-        <input type="button" value="전 체" onclick="window.open('http://221.143.128.23:999/Yangju/stat.html')"/>
+        
     </form>
    
     
@@ -30,35 +79,26 @@
 <meta name="viewport" content="user-scalable=yes, initial-scale=1.0, maximum-scale=2.0, minimum-scale=1.0, width=device-width">
 
 <body>
-<div id="map" style="margin: 0px; width:100%; height:70%; line-height: 120%;"></div>
+<div id="container">
+    <div id="rvWrapper">
+        <div id="roadview" style="width:100%;height:100%;"></div> <!-- 로드뷰를 표시할 div 입니다 -->
+        <div id="close" title="로드뷰닫기" onclick="closeRoadview()"><span class="img"></span></div>
+    </div>
+    <div id="mapWrapper">
+        <div id="map" style="margin: 0px; width:100%; height:100%;"></div> <!-- 지도를 표시할 div 입니다 -->
+        <div id="roadviewControl" onclick="setRoadviewRoad()"></div>
+    </div>
+</div>
 <h6>
-    <button id="traceBtn" onclick="traceClickHandler()">현재위치 추적 시작</button>
-    <button id="traceBtn" onclick="movePosition()">현재위치로 지도 이동</button>
-    <button onclick="moveCenter()">중심 위치</button>
-    <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
-    
-    <a id="link">길 찾기</a><br>
-클릭 지점 : <span id="result2"></span>   <span id="result"></span><br>
-선택폴리곤 : <h7 id="polID"></h7><br>
-관측 지점 : <span id="position_lat"></span> <span id="position_long"></span><br>
-관측 일시 : <span id="recdate"></span><br>
-조사자입력 : <input type="text" id="surveyers" value=""/>
-<table> 
-<tr><td><form name="formA" method="post" action="">
-    <input type="button" value="비오톱 정보 기록/수정" onclick="new_window_biotope()"/>
-    <input type="hidden" name="surveyer_new" value=""/>
-    <input type="hidden" name="polID" value=""/>
-    <input type="hidden" name="position_lat" value=""/>
-    <input type="hidden" name="position_long" value=""/>
-    <input type="hidden" name="recdate" value=""/>
-</form></td>
-<td><form name="formB" method="post" action="">
-    <input type="button" value="   생태계교란종 기록   " onclick="new_window_invasive()"/>
-    <input type="hidden" name="surveyer_new" value=""/>
-    <input type="hidden" name="position_lat" value=""/>
-    <input type="hidden" name="position_long" value=""/>
-    <input type="hidden" name="recdate" value=""/>
-</form></td></tr></table>
+    <h6>
+        <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
+    클릭 지점 : <span id="result2"></span>   <span id="result"></span><br>
+    선택폴리곤 : <h7 id="polID"></h7><br>
+    <table> 
+    <tr><td><form name="formA" method="post" action="">
+        <input type="hidden" name="polID" value=""/>
+    </form></td></tr></table>
+
 </h6>
 <script>
 //==============================================================================================
@@ -172,205 +212,7 @@ case '37705021' : var mapCenter = new kakao.maps.LatLng(37.6875, 127.0125); var 
 document.formC.map_id_b.value = mapID;
 document.formC.map_id.value = mapID;
 
-//도엽별 통계창 띄우기
-function map_stat(){
-    var objPopup = window.open('','myWindow2');
-    document.formC.target="myWindow2";      // 타켓
-    document.formC.action="http://221.143.128.23:999/Yangju/map_stat.html";       // 수행할 경로
-    if ( objPopup == null){                                  // 팝업이 뜨는지 확인
-        alert('차단된 팝업창을 허용해 주세요');}
-    else{
-        document.formC.submit();
-        objPopup.focus();
-    }
-}
 
-//기록창 띄우기(비오톱)
-function new_window_biotope(){
-//기록용 정보 받기(비오톱)
-    //조사자 입력 값 받기
-    const surveyers = document.getElementById("surveyers").value;
-    document.formA.surveyer_new.value = surveyers;
-    //기록 시간 받기
-    var time= new Date(); //시간받기위해서 new date
-    var month = time.getMonth()+1;
-    document.formA.recdate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
-    //관측지점 받기
-    function success1(position) {
-        document.formA.position_lat.value = position.coords.latitude;
-        document.formA.position_long.value = position.coords.longitude;
-        if(!document.formA.polID.value){
-           alert('먼저 폴리곤을 선택해 주세요');}
-        else{
-           if(!document.formA.surveyer_new.value){
-           alert('조사자를 입력해 주세요=조사자1, 조사자2...');}
-            else{
-                var objPopup = window.open('','myWindow');
-                document.formA.target="myWindow";      // 타켓
-                document.formA.action="http://221.143.128.23:999/Yangju/record_pg.html";       // 수행할 경로
-                if ( objPopup == null){                                  // 팝업이 뜨는지 확인
-                    alert('차단된 팝업창을 허용해 주세요');}
-                else{
-                    document.formA.submit();
-                    objPopup.focus();
-                }
-            }
-        }
-    }
-    function error1() {
-        alert('현재 위치를 알 수 없습니다');
-    }
-    var options1 = {
-        enableHighAccuracy: true,
-        maximumAge: 1000,
-        timeout: 3000
-    }
-    const positionXY = navigator.geolocation.getCurrentPosition(success1, error1, options1);
-}
-//기록창 띄우기(생태계교란종)
-function new_window_invasive(){
-//기록용 정보 받기(생태계교란종)
-    //조사자 입력 값 받기
-    const surveyers = document.getElementById("surveyers").value;
-    document.formB.surveyer_new.value = surveyers;
-    //기록 시간 받기
-    var time= new Date(); //시간받기위해서 new date
-    var month = time.getMonth()+1;
-    document.formB.recdate.value = time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
-    //관측지점 받기
-    function success2(position) {
-        document.formB.position_lat.value = position.coords.latitude;
-        document.formB.position_long.value = position.coords.longitude;
-        if(!document.formB.surveyer_new.value){
-           alert('조사자를 입력해 주세요=조사자1, 조사자2...');}
-        else{
-            var objPopup = window.open('','myWindow');
-            document.formB.target="myWindow";      // 타켓
-            document.formB.action="http://221.143.128.23:999/Yangju/record_invasive_pg.html";       // 수행할 경로
-            if ( objPopup == null){                                  // 팝업이 뜨는지 확인
-                alert('차단된 팝업창을 허용해 주세요');}
-            else{
-                document.formB.submit();
-                objPopup.focus();
-            }
-        }
-    }
-    function error2() {
-        alert('현재 위치를 알 수 없습니다');
-    }
-    var options2 = {
-        enableHighAccuracy: true,
-        maximumAge: 1000,
-        timeout: 3000
-    }
-    navigator.geolocation.getCurrentPosition(success2, error2, options2);
-}
-
-// 현재위치 추적 시작-끄기
-var options = {
-  enableHighAccuracy: true,
-  timeout: 3000,
-  maximumAge: 1000
-}
-var tracing = false;
-var watchid;
-function traceClickHandler(){
-    if(tracing == true){
-        traceStop();
-        tracing = false;
-        document.getElementById("traceBtn").innerText = "현재위치 추적 시작";
-    }else if(tracing == false){
-        traceStart();
-        tracing = true;
-        document.getElementById("traceBtn").innerText = "현재위치 추적 중지";
-    }
-}
-function traceStart() {
- watchid = navigator.geolocation.watchPosition(success, error, options);
-}
-function traceStop() {
-    navigator.geolocation.clearWatch(watchid);
-}
-
-var alpha;
-function success(position) {
-    var lat = position.coords.latitude, lon = position.coords.longitude;
-    window.addEventListener("deviceorientationabsolute", handler, true);
-    var locPosition = new kakao.maps.LatLng(lat, lon);
-    displayMarker(locPosition, alpha);
-}
-function handler(compass) {
-  alpha = compass.webkitCompassHeading || Math.abs(compass.alpha - 360);
-}
-
-function error(err) {
-    alert('현재 위치를 알 수 없습니다');
-	var locPosition = mapCenter; // 지도의 중심 좌표
-        displayMarker(locPosition, 0);
-}
-
-// 마커 표시-현재위치 추적
-var marker1= new kakao.maps.Marker();
-function displayMarker(locPosition, alpha) {
-    marker1.setMap(null);
-    var markerImage = '<div class="image-box" style="transform:rotate('+alpha+'deg)";> <img class="image" src='+currentArrow+' alt = "◆"></div>';
-    marker1 = new kakao.maps.CustomOverlay({  
-        map: map, 
-        position: locPosition,
-		content: markerImage,
-        yAnchor: 1
-    });
-    marker1.setMap(map); 
-}
-
-// 마커 표시하고 센터 이동하기-현재위치
-function movePosition(){
-    var locPosition;
-    const positionXY = navigator.geolocation.getCurrentPosition(success3, error3, options3);
-    function success3(position) {
-        var lat = position.coords.latitude, lon = position.coords.longitude
-        locPosition = new kakao.maps.LatLng(lat, lon);
-        displayMarker2(locPosition);
-    }
-    function error3() {
-        alert('현재 위치를 알 수 없습니다');
-    }
-    var options3 = {
-        enableHighAccuracy: true,
-        maximumAge: 1000,
-        timeout: 3000
-    };
-}
-
-var marker2= new kakao.maps.Marker();
-function displayMarker2(locPosition) {
-    marker2.setMap(null);
-    var imageSrc = yellowDot; // 마커이미지의 주소입니다   
-    var imageSize = new kakao.maps.Size(12, 12); 
-    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
-	marker2 = new kakao.maps.Marker({  
-        map: map, 
-        position: locPosition,
-		image: markerImage
-    }); 
-	marker2.setMap(map);
-    map.setCenter(locPosition);      
-}
-
-// 클릭지점 마커 표시하기
-var marker3= new kakao.maps.Marker();
-function displayMarker3(locPosition) {
-    marker3.setMap(null);
-    var imageSrc = redDot; // 마커이미지의 주소입니다   
-    var imageSize = new kakao.maps.Size(12, 12); 
-    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 	
-	marker3 = new kakao.maps.Marker({  
-        map: map, 
-        position: locPosition,
-		image: markerImage
-    });
-    marker3.setMap(map);
-}
 // 중심좌표로 이동
 function moveCenter(){
     var locPosition = mapCenter; // 지도의 중심좌표
@@ -407,34 +249,28 @@ function displayArea(polygonPaths) {
    // 폴리곤 클릭시 작동
     kakao.maps.event.addListener(polygon, 'click', function(mouseEvent) {
         //이전 폴리곤 지우기
-        pastpolygon.setOptions({strokeColor: stroCol, strokeOpacity: 0.5, fillColor: fillCol, fillOpacity: fillOpa});  
+        pastpolygon.setOptions({strokeColor: stroCol, strokeOpacity: 0.5, strokeWeight:1, fillColor: fillCol, fillOpacity: fillOpa});  
         //선택 폴리곤 색칠
-        polygon.setOptions({ fillColor: '#0101DF', fillOpacity: 0.3});   
+        polygon.setOptions({ strokeColor: '#FFF000', strokeOpacity: 1, strokeWeight:2});   
         
         //기록용 정보
         var result2Div = document.getElementById('polID');
         result2Div.innerHTML = polygonPaths.name;
         document.formA.polID.value = polygonPaths.name;
-        //기록 시간 받기
-        var time= new Date(); //시간받기위해서 new date
-        var month = time.getMonth()+1;
-        document.getElementById("recdate").innerHTML=time.getFullYear()+"-"+month+"-"+time.getDate()+" "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
-        //관측지점 받기
-        function success4(position) {
-          document.getElementById("position_lat").innerHTML=position.coords.latitude;
-          document.getElementById("position_long").innerHTML=position.coords.longitude;
-        }
-        function error4() {
-            alert('현재 위치를 알 수 없습니다');
-        }
+       
         var options4 = {
             enableHighAccuracy: true,
             maximumAge: 1000,
             timeout: 10000
         };
-        const positionXY = navigator.geolocation.getCurrentPosition(success4, error4, options4);
+        
         //활성화된 폴리곤 지우기위해 저장
         pastpolygon=polygon;
+        //속성정보 창 갱신
+        var inspectAdd= 'http://221.143.128.23:999/Yangju/inspect_forest.html?polID='+ polygonPaths.name;
+        parent.f3.location.href=inspectAdd;
+
+
     });
     pastpolygon.setMap(map);     
     polygon.setMap(map);
@@ -503,54 +339,296 @@ function offName(){
 }
 
 
-
-
 //==============================================================================================
 //==============================================================================================
-
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = { 
         center: mapCenter, // 지도의 중심좌표
-        level: 8 // 지도의 확대 레벨
-    };  
+        level: 5 // 지도의 확대 레벨
+    };
 
 var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+/* ############ 카카오 맵 API ############ */
+var overlayOn = false, // 지도 위에 로드뷰 오버레이가 추가된 상태를 가지고 있을 변수
+    container = document.getElementById('container'), // 지도와 로드뷰를 감싸고 있는 div 입니다
+    mapWrapper = document.getElementById('mapWrapper'), // 지도를 감싸고 있는 div 입니다
+    rvContainer = document.getElementById('roadview'); //로드뷰를 표시할 div 입니다
+
+
+// 로드뷰 객체를 생성합니다 
+var rv = new kakao.maps.Roadview(rvContainer); 
+
+// 좌표로부터 로드뷰 파노라마 ID를 가져올 로드뷰 클라이언트 객체를 생성합니다 
+var rvClient = new kakao.maps.RoadviewClient(); 
+
+// 로드뷰에 좌표가 바뀌었을 때 발생하는 이벤트를 등록합니다 
+kakao.maps.event.addListener(rv, 'position_changed', function() {
+    // 현재 로드뷰의 위치 좌표를 얻어옵니다 
+    var rvPosition = rv.getPosition();
+    // 지도의 중심을 현재 로드뷰의 위치로 설정합니다
+    map.setCenter(rvPosition);
+    // 지도 위에 로드뷰 도로 오버레이가 추가된 상태이면
+    if(overlayOn) {
+        // 마커의 위치를 현재 로드뷰의 위치로 설정합니다
+        marker.setPosition(rvPosition);
+    }
+});
+// 마커 이미지를 생성합니다
+var markImage = new kakao.maps.MarkerImage(
+    'https://t1.daumcdn.net/localimg/localimages/07/2018/pc/roadview_minimap_wk_2018.png',
+    new kakao.maps.Size(26, 46),
+    {
+        // 스프라이트 이미지를 사용합니다.
+        // 스프라이트 이미지 전체의 크기를 지정하고
+        spriteSize: new kakao.maps.Size(1666, 168),
+        // 사용하고 싶은 영역의 좌상단 좌표를 입력합니다.
+        // background-position으로 지정하는 값이며 부호는 반대입니다.
+        spriteOrigin: new kakao.maps.Point(705, 114),
+        offset: new kakao.maps.Point(13, 46)
+    }
+);
+// 드래그가 가능한 마커를 생성합니다
+var marker = new kakao.maps.Marker({
+    image : markImage,
+    position: mapCenter,
+    draggable: true
+});
+// 마커에 dragend 이벤트를 등록합니다
+kakao.maps.event.addListener(marker, 'dragend', function(mouseEvent) {
+    // 현재 마커가 놓인 자리의 좌표입니다 
+    var position = marker.getPosition();
+    // 마커가 놓인 위치를 기준으로 로드뷰를 설정합니다
+    toggleRoadview(position);
+});
+
+// 전달받은 좌표(position)에 가까운 로드뷰의 파노라마 ID를 추출하여
+// 로드뷰를 설정하는 함수입니다
+function toggleRoadview(position){
+    rvClient.getNearestPanoId(position, 50, function(panoId) {
+        // 파노라마 ID가 null 이면 로드뷰를 숨깁니다
+        if (panoId === null) {
+            toggleMapWrapper(true, position);
+        } else {
+         toggleMapWrapper(false, position);
+            // panoId로 로드뷰를 설정합니다
+            rv.setPanoId(panoId, position);
+        }
+    });
+}
+// 지도를 감싸고 있는 div의 크기를 조정하는 함수입니다
+function toggleMapWrapper(active, position) {
+    if (active) {
+        // 지도를 감싸고 있는 div의 너비가 100%가 되도록 class를 변경합니다 
+        container.className = '';
+        // 지도의 크기가 변경되었기 때문에 relayout 함수를 호출합니다
+        map.relayout();
+        // 지도의 너비가 변경될 때 지도중심을 입력받은 위치(position)로 설정합니다
+        map.setCenter(position);
+    } else {
+        // 지도만 보여지고 있는 상태이면 지도의 너비가 50%가 되도록 class를 변경하여로드뷰가 함께 표시되게 합니다
+        if (container.className.indexOf('view_roadview') === -1) {
+            container.className = 'view_roadview';
+            // 지도의 크기가 변경되었기 때문에 relayout 함수를 호출합니다
+            map.relayout();
+            // 지도의 너비가 변경될 때 지도중심을 입력받은 위치(position)로 설정합니다
+            map.setCenter(position);
+        }
+    }
+}
+// 지도 위의 로드뷰 도로 오버레이를 추가,제거하는 함수입니다
+function toggleOverlay(active) {
+    if (active) {
+        overlayOn = true;
+        // 지도 위에 로드뷰 도로 오버레이를 추가합니다
+        map.addOverlayMapTypeId(kakao.maps.MapTypeId.ROADVIEW);
+        // 지도 위에 마커를 표시합니다
+        marker.setMap(map);
+        // 마커의 위치를 지도 중심으로 설정합니다 
+        marker.setPosition(map.getCenter());
+        // map walker를 생성한다. 생성시 지도의 중심좌표를 넘긴다.
+        mapWalker = new MapWalker(map.getCenter());
+        mapWalker.setMap(map); // map walker를 지도에 설정한다.
+        // 로드뷰의 위치를 지도 중심으로 설정합니다
+        toggleRoadview(map.getCenter());
+    } else {
+        overlayOn = false;
+        // 지도 위의 로드뷰 도로 오버레이를 제거합니다
+        map.removeOverlayMapTypeId(kakao.maps.MapTypeId.ROADVIEW);
+        // 지도 위의 마커를 제거합니다
+        marker.setMap(null);
+        mapWalker.setMap(null); 
+    }
+}
+
+// 지도 위의 로드뷰 버튼을 눌렀을 때 호출되는 함수입니다
+function setRoadviewRoad() {
+    var control = document.getElementById('roadviewControl');
+    // 버튼이 눌린 상태가 아니면
+    if (control.className.indexOf('active') === -1) {
+        control.className = 'active';
+        // 로드뷰 도로 오버레이가 보이게 합니다
+        toggleOverlay(true);
+    } else {
+        control.className = '';
+        // 로드뷰 도로 오버레이를 제거합니다
+        toggleOverlay(false);
+    }
+}
+
+// 로드뷰에서 X버튼을 눌렀을 때 로드뷰를 지도 뒤로 숨기는 함수입니다
+function closeRoadview() {
+    var position = marker.getPosition();
+    toggleMapWrapper(true, position);
+}
+//------------------
+//var walker = new kakao.maps.CustomOverlay();
+//지도위에 현재 로드뷰의 위치와, 각도를 표시하기 위한 map walker 아이콘 생성 클래스
+function MapWalker(position){
+    //커스텀 오버레이에 사용할 map walker 엘리먼트
+    var content = document.createElement('div');
+    var figure = document.createElement('div');
+    var angleBack = document.createElement('div');
+    //map walker를 구성하는 각 노드들의 class명을 지정 - style셋팅을 위해 필요
+    content.className = 'MapWalker';
+    figure.className = 'figure';
+    angleBack.className = 'angleBack';
+    content.appendChild(angleBack);
+    content.appendChild(figure);
+    //커스텀 오버레이 객체를 사용하여, map walker 아이콘을 생성
+    var walker = new kakao.maps.CustomOverlay({
+        position: position,
+        content: content,
+        yAnchor: 1
+});
+
+this.walker = walker;
+this.content = content;
+}
+
+//로드뷰의 pan(좌우 각도)값에 따라 map walker의 백그라운드 이미지를 변경 시키는 함수
+//background로 사용할 sprite 이미지에 따라 계산 식은 달라 질 수 있음
+MapWalker.prototype.setAngle = function(angle){
+
+    var threshold = 22.5; //이미지가 변화되어야 되는(각도가 변해야되는) 임계 값
+    for(var i=0; i<16; i++){ //각도에 따라 변화되는 앵글 이미지의 수가 16개
+        if(angle > (threshold * i) && angle < (threshold * (i + 1))){
+        //각도(pan)에 따라 아이콘의 class명을 변경
+            var className = 'm' + i;
+            this.content.className = this.content.className.split(' ')[0];
+            this.content.className += (' ' + className);
+            break;
+    }
+}
+};
+//map walker의 위치를 변경시키는 함수
+MapWalker.prototype.setPosition = function(position){
+    this.walker.setPosition(position);
+};
+//map walker를 지도위에 올리는 함수
+MapWalker.prototype.setMap = function(map){
+    this.walker.setMap(map);
+};
+
+
+
+
+var mapWalker = null;
+    
+    // 로드뷰가 초기화 된 후, 추가 이벤트를 등록한다.
+    // 로드뷰를 상,하,좌,우,줌인,줌아웃을 할 경우 발생한다.
+    // 로드뷰를 조작할때 발생하는 값을 받아 map walker의 상태를 변경해 준다.
+    kakao.maps.event.addListener(rv, 'viewpoint_changed', function(){
+
+        // 이벤트가 발생할 때마다 로드뷰의 viewpoint값을 읽어, map walker에 반영
+        var viewpoint = rv.getViewpoint();
+        mapWalker.setAngle(viewpoint.pan);
+
+    });
+
+    // 로드뷰내의 화살표나 점프를 하였을 경우 발생한다.
+    // position값이 바뀔 때마다 map walker의 상태를 변경해 준다.
+    kakao.maps.event.addListener(rv, 'position_changed', function(){
+
+        // 이벤트가 발생할 때마다 로드뷰의 position값을 읽어, map walker에 반영 
+        var position = rv.getPosition();
+        mapWalker.setPosition(position);
+        map.setCenter(position);
+
+    });
+
+//=============================
+/*
+var startX, startY, startOverlayPoint;
+// 커스텀 오버레이에 mousedown이벤트를 등록합니다 
+addEventHandle(customoverlay, 'mousedown', onMouseDown);
+function onMouseDown(e) {
+    var proj = map.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다 
+        overlayPos = customoverlay.getPosition(); // 커스텀 오버레이의 현재 위치를 가져옵니다
+    // 커스텀오버레이에서 마우스 관련 이벤트가 발생해도 지도가 움직이지 않도록 합니다
+    kakao.maps.event.preventMap();
+    // mousedown된 좌표를 설정합니다 
+    startX = e.clientX; 
+    startY = e.clientY;
+    // mousedown됐을 때의 커스텀 오버레이의 좌표를
+    // 지도 컨테이너내 픽셀 좌표로 변환합니다 
+    startOverlayPoint = proj.containerPointFromCoords(overlayPos);
+    // document에 mousemove 이벤트를 등록합니다 
+    addEventHandle(mapWalker, 'mousemove', onMouseMove);       
+}
+// mouseup 이벤트가 일어났을때 mousemove 이벤트를 제거하기 위해 document에 mouseup 이벤트를 등록합니다 
+
+addEventHandle(customoverlay, 'mouseup', onMouseUp);
+// 커스텀 오버레이에 mousedown 했을 때 호출되는 핸들러 입니다 
+
+
+// 커스텀 오버레이에 mousedown 한 상태에서 
+// mousemove 하면 호출되는 핸들러 입니다 
+function onMouseMove(e) {
+    var proj = map.getProjection(),// 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다 
+        deltaX = startX - e.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다 
+        deltaY = startY - e.clientY,
+        // mousedown됐을 때의 커스텀 오버레이의 좌표에 실제로 마우스가 이동된 픽셀좌표를 반영합니다 
+        newPoint = new kakao.maps.Point(startOverlayPoint.x - deltaX, startOverlayPoint.y - deltaY), 
+        // 계산된 픽셀 좌표를 지도 컨테이너에 해당하는 지도 좌표로 변경합니다 
+        newPos = proj.coordsFromContainerPoint(newPoint);
+    // 커스텀 오버레이의 좌표를 설정합니다 
+    customoverlay.setPosition(newPos);
+}
+// mouseup 했을 때 호출되는 핸들러 입니다 
+function onMouseUp(e) {
+    // 등록된 mousemove 이벤트 핸들러를 제거합니다 
+    removeEventHandle(customoverlay, 'mousemove', onMouseMove);
+}
+
+
+// target node에 이벤트 핸들러를 등록하는 함수힙니다  
+function addEventHandle(target, type, callback) {
+    if (target.addEventListener) {
+        target.addEventListener(type, callback);
+    } else {
+        target.attachEvent('on' + type, callback);
+    }
+}
+
+// target node에 등록된 이벤트 핸들러를 제거하는 함수힙니다 
+function removeEventHandle(target, type, callback) {
+    if (target.removeEventListener) {
+        target.removeEventListener(type, callback);
+    } else {
+        target.detachEvent('on' + type, callback);
+    }
+}
+*/
+
+//==============================
 
 // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
 var mapTypeControl = new kakao.maps.MapTypeControl();
 map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
 var zoomControl = new kakao.maps.ZoomControl();
 map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
-// 클릭 위치표시
-kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
-    // 클릭한 위도, 경도 정보를 가져옵니다 
-    var latlng = mouseEvent.latLng;
-    var currentLat = latlng.getLat();
-    var currentLng = latlng.getLng();
-    currentLat=currentLat.toFixed(6);
-    currentLng=currentLng.toFixed(6);
-    var message = currentLat + ', ';
-    message += + currentLng;
-    var link = 'https://map.kakao.com/link/to/목적지,'+ message;
-    document.getElementById("link").setAttribute("href",link);
 
-    var resultDiv = document.getElementById('result'); 
-    resultDiv.innerHTML = message;
-    
-    var latDeg=Math.floor(currentLat);
-    var latMin=Math.floor((currentLat-latDeg)*60);
-    var prelatSec=((currentLat-latDeg)*60-latMin)*60;
-    var latSec=prelatSec.toFixed(2);
-    var lngDeg=Math.floor(currentLng);
-    var lngMin=Math.floor((currentLng-lngDeg)*60);
-    var prelngSec=((currentLng-lngDeg)*60-lngMin)*60;
-    var lngSec=prelngSec.toFixed(2);
-    const linesep = "\n\n"
-    message2 =latDeg +"°" + latMin +"′" + latSec+"″, " + lngDeg +"°" + lngMin +"′" + lngSec+"″"; 
-    var result2Div = document.getElementById('result2'); 
-    result2Div.innerHTML = message2;
-    displayMarker3(latlng);
-});
 // 도시 경계 표시하기
 var boundary = new XMLHttpRequest();
 boundary.open('GET', boundaryFile, true);
