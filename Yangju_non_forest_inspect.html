@@ -9,4 +9,12 @@
     <iframe width="6%" height ="1100px" src="Yangju_non_forest_inspect1.html" name="f1"></iframe>
     <iframe width="69%" height ="1100px"  src="Yangju_non_forest_inspect2.html" name="f2"></iframe>
     <iframe width="23%" height ="1100px"  src="http://221.143.128.23:999/Yangju/inspect_non_forest.html" name="f3"></iframe>
-    
+ 
+    <script>
+        window.addEventListener('message', function(e) {
+          console.log(e.data); // { hello: 'parent' }
+          var item = localStorage.getItem('dummy');
+          console.log(item); // zerocho
+          document.getElementById('iframe').contentWindow.postMessage(item, '*');
+        });
+        </script>
