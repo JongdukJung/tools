@@ -91,6 +91,7 @@
 </div>
 <h6>
     <h6>
+        <button id="usedistrictBtn" onclick="usedistrictClickHandler()">지적도 켜기</button>
         <button id="polygonNameBtn" onclick="polygonNameClickHandler()">폴리곤이름 켜기</button>
     클릭 지점 : <span id="result2"></span>   <span id="result"></span><br>
     선택폴리곤 : <h7 id="polID"></h7><br>
@@ -339,7 +340,20 @@ function offName(){
     }
 }
 
-
+//지적도 켜고 끄기
+function usedistrictClickHandler(){
+    console.log("usedistrictClickHandler() call");
+    if(usedistrictVisible == true){
+        usedistrictVisible = false;
+        document.getElementById("usedistrictBtn").innerText = "지적도 켜기";
+        map.removeOverlayMapTypeId(kakao.maps.MapTypeId.USE_DISTRICT);
+        
+    } else if(usedistrictVisible == false){
+        usedistrictVisible = true;
+        document.getElementById("usedistrictBtn").innerText = "지적도 끄기";
+        map.addOverlayMapTypeId(kakao.maps.MapTypeId.USE_DISTRICT);
+    }
+}
 //==============================================================================================
 //==============================================================================================
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
@@ -689,6 +703,8 @@ pointText3.onload = function() {
 }
 pointText3.send(null);
 var polygonNameArr = [];
+//지적도 보기 기본값(끄기)
+var usedistrictVisible = false;
 </script>
 </body>
 </html>
