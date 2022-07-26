@@ -641,7 +641,7 @@
 {title: '<BB>C629</BB>', latlng: new kakao.maps.LatLng(37.7858823, 127.0283861)},
 {title: '<BB>C630</BB>', latlng: new kakao.maps.LatLng(37.7791434, 127.0377986)},
 {title: '<BB>C631</BB>', latlng: new kakao.maps.LatLng(37.7781044, 127.0297444)},
-{title: '<BB>C6312</BB>', latlng: new kakao.maps.LatLng(37.778102, 127.034481)},
+{title: '<BB>C632</BB>', latlng: new kakao.maps.LatLng(37.778102, 127.034481)},
 {title: '<BB>C633</BB>', latlng: new kakao.maps.LatLng(37.7772846, 127.0298301)},
 {title: '<BB>C634</BB>', latlng: new kakao.maps.LatLng(37.7957233, 127.0697947)},
 {title: '<BB>C635</BB>', latlng: new kakao.maps.LatLng(37.7880184, 127.050184)},
