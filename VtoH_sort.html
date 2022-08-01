@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width">
+    <title>세로나열을 가로로 변환(정렬)</title>
+    <style>
+		header {padding: 10px; font-size: 20px; background: #F2F2F2;}
+		article {padding: 10px; font-size: 14px;}
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            padding: 3px;
+            border: 1px solid #dadada;
+        }
+        td {
+            padding: 3px;
+            border: 1px solid #dadada;
+        }
+        .plantlist-label{
+            font-size: medium;
+        }
+        .mb-5{
+            margin-bottom: 5px;
+        }
+        .mb-10{
+            margin-bottom: 10px;
+        }
+        textarea#plantlist{
+            min-width: 60%;
+            max-width: 60%;
+            min-height: 100px;
+            max-height: 200px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>세로나열을 가로로 변환(정렬)</h2>
+        <h5>[지역명] tab [식물명] 형식으로 입력, 마지막 빈 줄은 필히 제거</h5>
+    </header>
+    <p>
+        <button type="button" style="WIDTH: 180pt; HEIGHT: 20pt; font-size: 12px" onclick="location.href='VtoH.html' ">세로나열을 가로로 변환 바로가기(정렬 안함)</button>
+        <button type="button" style="WIDTH: 180pt; HEIGHT: 20pt; font-size: 12px" onclick="location.href='HtoV.html' ">가로나열을 세로로 변환 바로가기</button>
+    </p>
+    <article>
+        <div class="mb-10">
+            <label for="plantlist" class="plantlist-label mb-5">식물목록 : </label>
+            <br/>
+            <textarea type="text" id="plantlist"></textarea>
+            <button type="button" id="searchButton">변환</button>
+        </div>
+        <div>
+            <table id="resultTable" class="mb-10">
+                <colgroup>
+                    <col width="10" />
+                    <col width="90%" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>지역구분</th>
+                        <th>식물명</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </article>
+
+    
+    <script>
+          document.getElementById("searchButton").addEventListener("click", searchButtonClickHandler);
+          
+      //변환 결과값 출력할 테이블태그 아이디
+        const TABLE_ID = "resultTable"
+       
+      //변환버튼 이벤트 함수
+        function searchButtonClickHandler(){
+            var plantlistTxt = document.getElementById("plantlist").value;
+            
+      //세로 텍스트 -> 가로텍스트
+            plantlistParse(plantlistTxt);
+            
+        }
+
+        //text -> Map Array
+        function plantlistParse(plantlistTxt){
+            var tableContainer = document.querySelector("#"+TABLE_ID+">tbody");
+            var tableRows = "";
+            var regions = [];
+            plantlistTxt.trim();
+            var txtRows = plantlistTxt.split("\n");
+            txtRows.sort();
+            for(var i in txtRows){
+                //빈 행 제거
+                txtRows[i].trim();
+                if(txtRows[i] == "") {continue;}
+                //열 분리
+             
+                const arrRow = txtRows[i].split("\t");
+                arrRow[0].trim();
+                arrRow[1].trim();
+                if(arrRow[0].length>0){
+                    regions[i]=arrRow[0];
+                }
+            }
+            for(var i in regions){
+                console.log(regions[i]);
+            }
+            var regionset = Array.from(new Set(regions));
+      
+            for(var i in regionset){
+                var plantlist=[];
+                console.log(i);
+                console.log(regionset[i]);
+                for(var k in txtRows){
+                const arrRow = txtRows[k].split("\t");
+                    arrRow[0].trim();
+                    arrRow[1].trim();
+                    if(regionset[i] == arrRow[0] ){
+                        if(arrRow[1]!=""){
+                        plantlist=plantlist +', '+arrRow[1];
+                        }
+                    }
+                }
+                
+                plantlist = plantlist.substring(2,plantlist.length);
+                tableRows +=    "<tr>"+
+                                    "<td>"+regionset[i]+"</td>"+
+                                    "<td>"+plantlist+"</td>"+
+                                "</tr>";
+                
+            }
+
+            tableContainer.innerHTML = tableRows; 
+
+            
+            }
+        //    
+        
+
+     
+
+
+
+
+        
+    </script>
+</body>
+</html>
