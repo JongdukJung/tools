@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width">
-    <title>세로나열을 가로로 변환</title>
+    <title>세로나열을 가로로 변환(정렬 안함)</title>
     <style>
 		header {padding: 10px; font-size: 20px; background: #F2F2F2;}
 		article {padding: 10px; font-size: 14px;}
@@ -40,11 +40,12 @@
 </head>
 <body>
     <header>
-        <h2>세로나열을 가로로 변환</h2>
+        <h2>세로나열을 가로로 변환(정렬 안함)</h2>
         <h5>[지역명] tab [식물명] 형식으로 입력, 마지막 빈 줄은 필히 제거</h5>
     </header>
     <p>
         <button type="button" style="WIDTH: 180pt; HEIGHT: 20pt; font-size: 12px" onclick="location.href='HtoV.html' ">가로나열을 세로로 변환 바로가기</button>
+        <button type="button" style="WIDTH: 180pt; HEIGHT: 20pt; font-size: 12px" onclick="location.href='VtoH_sort.html' ">세로나열을 가로로 변환 바로가기(정렬)</button>
     </p>
     <article>
         <div class="mb-10">
@@ -93,7 +94,7 @@
             var regions = [];
             plantlistTxt.trim();
             var txtRows = plantlistTxt.split("\n");
-            txtRows.sort();
+            //txtRows.sort();
             for(var i in txtRows){
                 //빈 행 제거
                 txtRows[i].trim();
