@@ -21,7 +21,7 @@
     <form name="formC" method="post" action="">
         조사 통계 보기 : <input type="button" name="map_id_b" value="" onclick="map_stat()"/>
         <input type="hidden" name="map_id" value=""/>
-        <input type="button" value="전 체" onclick="window.open('http://221.143.128.23:999/Yangju/stat.html')"/>
+        <input type="button" value="전 체" onclick="window.open('https://www.nabilab.kr/Yangju/stat.html')"/>
     </form>
    
     
@@ -176,7 +176,7 @@ document.formC.map_id.value = mapID;
 function map_stat(){
     var objPopup = window.open('','myWindow2');
     document.formC.target="myWindow2";      // 타켓
-    document.formC.action="http://221.143.128.23:999/Yangju/map_stat.html";       // 수행할 경로
+    document.formC.action="https://www.nabilab.kr/Yangju/map_stat.html";       // 수행할 경로
     if ( objPopup == null){                                  // 팝업이 뜨는지 확인
         alert('차단된 팝업창을 허용해 주세요');}
     else{
@@ -207,7 +207,7 @@ function new_window_biotope(){
             else{
                 var objPopup = window.open('','myWindow');
                 document.formA.target="myWindow";      // 타켓
-                document.formA.action="http://221.143.128.23:999/Yangju/record_pg.html";       // 수행할 경로
+                document.formA.action="https://www.nabilab.kr/Yangju/record_pg.html";       // 수행할 경로
                 if ( objPopup == null){                                  // 팝업이 뜨는지 확인
                     alert('차단된 팝업창을 허용해 주세요');}
                 else{
@@ -246,7 +246,7 @@ function new_window_invasive(){
         else{
             var objPopup = window.open('','myWindow');
             document.formB.target="myWindow";      // 타켓
-            document.formB.action="http://221.143.128.23:999/Yangju/record_invasive_pg.html";       // 수행할 경로
+            document.formB.action="https://www.nabilab.kr/Yangju/record_invasive_pg.html";       // 수행할 경로
             if ( objPopup == null){                                  // 팝업이 뜨는지 확인
                 alert('차단된 팝업창을 허용해 주세요');}
             else{
